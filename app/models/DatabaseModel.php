@@ -5,10 +5,9 @@ use PDOException;
 
 
 require_once __DIR__ . "/../../config/config.php";
-use PDO;
-use PDOException;
 
-class Database
+
+class DatabaseModel
 {
     private $host = DB_HOST;
     private $dbname = DB_NAME;

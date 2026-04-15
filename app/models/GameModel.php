@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Models\Database;
 use PDO;
 
-class Game {
+class GameModel {
 
     private $conn;
     private $name;
@@ -46,7 +46,7 @@ class Game {
 
     public function __construct()
     {
-        $database = new Database();
+        $database = new DatabaseModel();
         $this->conn = $database->connect();
     }
 

@@ -3,7 +3,7 @@ namespace App\Models;
 
 use App\Models\Database;
 use PDO;
-class Category {
+class CategoryModel {
     private $conn;
     private $name;
     private $id;
@@ -17,7 +17,7 @@ class Category {
 
     public function __construct()
     {
-        $database = new Database();
+        $database = new DatabaseModel();
         $this->conn = $database->connect();
     }
 

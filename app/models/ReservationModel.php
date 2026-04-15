@@ -6,7 +6,7 @@ use App\Models\Database;
 use PDO;
 use PDOException;
 
-class Reservation {
+class ReservationModel {
     protected $id;
     protected $client_name;
     protected $phone;
@@ -21,7 +21,7 @@ class Reservation {
     private $db;
 
     public function __construct() {
-        $database = new Database();
+        $database = new DatabaseModel();
         $this->db = $database->connect();
     }
 
