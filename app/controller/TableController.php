@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Controllers;
+namespace App\controller;
 
-use App\Models\Table;
+use App\models\Table;
 
 class TableController {
     private $tableModel;
