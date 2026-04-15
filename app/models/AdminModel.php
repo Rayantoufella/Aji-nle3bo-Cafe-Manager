@@ -1,53 +1,98 @@
 <?php
+namespace App\Models;
+use PDO;
+use PDOException;
 
 class AdminModel {
 
     private $pdo;
+    private $permissions = [];
 
     public function __construct($pdo) {
         $this->pdo = $pdo;
     }
 
+    
+
+    public function addPermission($perm) {
+        if (!in_array($perm, $this->permissions)) {
+            $this->permissions[] = $perm;
+        }
+    }
+
+    public function hasPermission($perm) {
+        return in_array($perm, $this->permissions);
+    }
+
+    public function getPermissions() {
+        return $this->permissions;
+    }
 
 
-    public function getAllGames() {
-        $stmt = $this->pdo->prepare("SELECT * FROM games");
+
+    public function getAllUsers() {
+        $stmt = $this->pdo->prepare("SELECT * FROM users ORDER BY created_at DESC");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getGameById($id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM games WHERE id = ?");
+    public function getUserById($id) {
+        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function createGame($name, $category, $min_players, $max_players, $duration, $description, $difficulty, $status) {
-        $stmt = $this->pdo->prepare("INSERT INTO games (name, category, min_players, max_players, duration, description, difficulty, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        return $stmt->execute([$name, $category, $min_players, $max_players, $duration, $description, $difficulty, $status]);
+    public function deleteUser($userId) {
+        $stmt = $this->pdo->prepare("DELETE FROM users WHERE id = ?");
+        return $stmt->execute([$userId]);
     }
 
-    public function updateGame($id, $name, $category, $min_players, $max_players, $duration, $description, $difficulty, $status) {
-        $stmt = $this->pdo->prepare("UPDATE games SET name = ?, category = ?, min_players = ?, max_players = ?, duration = ?, description = ?, difficulty = ?, status = ? WHERE id = ?");
-        return $stmt->execute([$name, $category, $min_players, $max_players, $duration, $description, $difficulty, $status, $id]);
+    public function changeUserRole($userId, $role) {
+        $stmt = $this->pdo->prepare("UPDATE users SET role = ? WHERE id = ?");
+        return $stmt->execute([$role, $userId]);
     }
 
-    public function deleteGame($id) {
+    public function createAdmin($username, $email, $pwd) {
+        $hashed = password_hash($pwd, PASSWORD_BCRYPT);
+        $stmt = $this->pdo->prepare("
+            INSERT INTO users (username, email, password, role, created_at)
+            VALUES (?, ?, ?, 'admin', NOW())
+        ");
+        return $stmt->execute([$username, $email, $hashed]);
+    }
+
+    public function emailExists($email) {
+        $stmt = $this->pdo->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function usernameExists($username) {
+        $stmt = $this->pdo->prepare("SELECT id FROM users WHERE username = ?");
+        $stmt->execute([$username]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+
+    public function editGame($gameId, $name, $categories_id, $nb_players, $duration, $difficulty, $description, $status) {
+        $stmt = $this->pdo->prepare("
+            UPDATE games SET name = ?, categories_id = ?, nb_players = ?, duration = ?, difficulty = ?, description = ?, status = ?
+            WHERE id = ?
+        ");
+        return $stmt->execute([$name, $categories_id, $nb_players, $duration, $difficulty, $description, $status, $gameId]);
+    }
+
+    public function deleteGame($gameId) {
         $stmt = $this->pdo->prepare("DELETE FROM games WHERE id = ?");
-        return $stmt->execute([$id]);
+        return $stmt->execute([$gameId]);
     }
 
-    public function getGamesByCategory($category) {
-        $stmt = $this->pdo->prepare("SELECT * FROM games WHERE category = ?");
-        $stmt->execute([$category]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function getGameById($gameId) {
+        $stmt = $this->pdo->prepare("SELECT * FROM games WHERE id = ?");
+        $stmt->execute([$gameId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function countGames() {
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) AS total FROM games");
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
-    }
 
     public function getAllReservations() {
         $stmt = $this->pdo->prepare("SELECT * FROM reservations ORDER BY date DESC");
@@ -55,137 +100,42 @@ class AdminModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getReservationById($id) {
+    public function getReservationById($resId) {
         $stmt = $this->pdo->prepare("SELECT * FROM reservations WHERE id = ?");
-        $stmt->execute([$id]);
+        $stmt->execute([$resId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getReservationsByDate($date) {
-        $stmt = $this->pdo->prepare("SELECT * FROM reservations WHERE DATE(date) = ?");
-        $stmt->execute([$date]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function cancelReservation($resId) {
+        $stmt = $this->pdo->prepare("UPDATE reservations SET status = 'cancelled' WHERE id = ?");
+        return $stmt->execute([$resId]);
     }
 
-    public function getReservationsByStatus($status) {
-        $stmt = $this->pdo->prepare("SELECT * FROM reservations WHERE status = ?");
-        $stmt->execute([$status]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
 
-    public function updateReservationStatus($id, $status) {
-        $stmt = $this->pdo->prepare("UPDATE reservations SET status = ? WHERE id = ?");
-        return $stmt->execute([$status, $id]);
-    }
-
-    public function getAvailableTables($date, $time_slot) {
+    public function logAction($action, $details) {
         $stmt = $this->pdo->prepare("
-            SELECT * FROM tables
-            WHERE id NOT IN (
-                SELECT table_id FROM reservations
-                WHERE DATE(date) = ? AND time_slot = ? AND status != 'cancelled'
-            )
+            INSERT INTO logs (action, details, created_at)
+            VALUES (?, ?, NOW())
         ");
-        $stmt->execute([$date, $time_slot]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->execute([$action, $details]);
     }
 
-    public function countReservationsByStatus($status) {
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) AS total FROM reservations WHERE status = ?");
-        $stmt->execute([$status]);
-        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
-    }
-
-    public function getAllSessions() {
-        $stmt = $this->pdo->prepare("SELECT * FROM sessions ORDER BY start_time DESC");
+    public function viewLogs() {
+        $stmt = $this->pdo->prepare("SELECT * FROM logs ORDER BY created_at DESC");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getSessionById($id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM sessions WHERE id = ?");
-        $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public function getActiveSessions() {
-        $stmt = $this->pdo->prepare("SELECT * FROM sessions WHERE status = 'active'");
-        $stmt->execute();
+    public function getLogsByAction($action) {
+        $stmt = $this->pdo->prepare("SELECT * FROM logs WHERE action = ? ORDER BY created_at DESC");
+        $stmt->execute([$action]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function startSession($game_id, $table_id, $user_id) {
-        $start_time = date('Y-m-d H:i:s');
-        $stmt = $this->pdo->prepare("INSERT INTO sessions (game_id, table_id, user_id, start_time, status) VALUES (?, ?, ?, ?, 'active')");
-        $stmt->execute([$game_id, $table_id, $user_id, $start_time]);
-        return $this->pdo->lastInsertId();
-    }
-
-    public function endSession($id) {
-        $end_time = date('Y-m-d H:i:s');
-        $stmt = $this->pdo->prepare("UPDATE sessions SET end_time = ?, status = 'finished' WHERE id = ?");
-        return $stmt->execute([$end_time, $id]);
-    }
-
-    public function getSessionsByGame($game_id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM sessions WHERE game_id = ?");
-        $stmt->execute([$game_id]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getSessionsByUser($user_id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM sessions WHERE user_id = ?");
-        $stmt->execute([$user_id]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getSessionsByTable($table_id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM sessions WHERE table_id = ?");
-        $stmt->execute([$table_id]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getSessionsByDate($date) {
-        $stmt = $this->pdo->prepare("SELECT * FROM sessions WHERE DATE(start_time) = ?");
+    public function getLogsByDate($date) {
+        $stmt = $this->pdo->prepare("SELECT * FROM logs WHERE DATE(created_at) = ? ORDER BY created_at DESC");
         $stmt->execute([$date]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getSessionDuration($id) {
-        $stmt = $this->pdo->prepare("SELECT TIMESTAMPDIFF(MINUTE, start_time, end_time) AS duration FROM sessions WHERE id = ?");
-        $stmt->execute([$id]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result ? $result['duration'] : null;
-    }
-
-    public function countSessionsByGame($game_id) {
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) AS total FROM sessions WHERE game_id = ?");
-        $stmt->execute([$game_id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
-    }
-
-    public function countSessionsByUser($user_id) {
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) AS total FROM sessions WHERE user_id = ?");
-        $stmt->execute([$user_id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
-    }
-
-    public function getAllTables() {
-        $stmt = $this->pdo->prepare("SELECT * FROM tables");
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getTableById($id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM tables WHERE id = ?");
-        $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public function updateTableStatus($id, $status) {
-        $stmt = $this->pdo->prepare("UPDATE tables SET status = ? WHERE id = ?");
-        return $stmt->execute([$status, $id]);
     }
 }
-
 ?>
