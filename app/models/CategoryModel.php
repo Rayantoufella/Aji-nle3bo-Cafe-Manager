@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-use Database;
+use App\Models\Database;
 use PDO;
 class Category {
     private $conn;

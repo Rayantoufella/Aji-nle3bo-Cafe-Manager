@@ -4,6 +4,9 @@ use PDO;
 use PDOException;
 
 
+require_once __DIR__ . "/../../config/config.php";
+use PDO;
+use PDOException;
 
 class Database
 {
