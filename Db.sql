@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS games-db;
-USE games-db;
+CREATE DATABASE IF NOT EXISTS games_db;
+USE games_db;
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -44,8 +44,8 @@ CREATE TABLE reservations (
     reservation_date DATE,
     reservation_time TIME,
     table_id INT,
-    status ENUM('pending', 'confirmed', 'cancelled') AS DEFAULT 'pending',
-    created_at TIMESTAMP,
+    status ENUM('pending', 'confirmed', 'cancelled') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (table_id) REFERENCES tables(id)
 );
