@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\models;
 
-require_once "dbModel.php";
-
+use App\Models\Database;
 use PDO;
 use PDOException;
 
@@ -22,7 +21,8 @@ class Reservation {
     private $db;
 
     public function __construct() {
-        $this->db = \app\models\Database::connect();
+        $database = new Database();
+        $this->db = $database->connect();
     }
 
    

@@ -1,5 +1,9 @@
 <?php
-require_once __DIR__ . '/../../config/config.php';
+namespace App\Models;
+use PDO;
+use PDOException;
+
+
 
 class Database
 {

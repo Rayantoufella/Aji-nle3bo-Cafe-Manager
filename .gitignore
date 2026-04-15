@@ -1,0 +1,12 @@
+/vendor/
+/.idea/
+/.vscode/
+*.log
+*.env
+/config/.env
+/config/database.local.php
+/uploads/
+/cache/
+*.swp
+*.swo
+.DS_Store

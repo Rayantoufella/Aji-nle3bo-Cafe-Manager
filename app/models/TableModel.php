@@ -1,10 +1,20 @@
 <?php
 
+<<<<<<< HEAD
 namespace App\models;
 
 use PDO;
 
 class Table {
+=======
+namespace App\Models;
+use App\Models\Database;
+
+
+use PDO;
+
+class TableModel {
+>>>>>>> bb45218ea8e7d7bcbdeab7aa442a0b76de204792
     protected $id;
     protected $number;
     protected $capacity;
@@ -13,11 +23,20 @@ class Table {
     private $db;
 
     public function __construct() {
+<<<<<<< HEAD
         $this->db = dbModel::getConnection();
     }
 
     public function getAll() {
         $stmt = $this->db->prepare("SELECT * FROM tables_cafe");
+=======
+        $database = new Database();
+        $this->db = $database->connect();
+    }
+
+    public function getAll() {
+        $stmt = $this->db->prepare("SELECT * FROM tables");
+>>>>>>> bb45218ea8e7d7bcbdeab7aa442a0b76de204792
         $stmt->execute();
         return $stmt->fetchAll();
     }
@@ -100,4 +119,8 @@ class Table {
         $stmt->execute(['id' => (int)$tableId, 'date' => $date, 'time' => $time]);
         return $stmt->fetchColumn() == 0;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> bb45218ea8e7d7bcbdeab7aa442a0b76de204792

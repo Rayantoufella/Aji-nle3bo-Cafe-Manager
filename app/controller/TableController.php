@@ -1,8 +1,14 @@
 <?php
 
+<<<<<<< HEAD
 namespace App\Controllers;
 
 use App\Models\Table;
+=======
+namespace App\controller;
+
+use App\models\Table;
+>>>>>>> bb45218ea8e7d7bcbdeab7aa442a0b76de204792
 
 class TableController {
     private $tableModel;
@@ -39,4 +45,8 @@ class TableController {
         header('Location: /index.php?action=tables');
         exit();
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> bb45218ea8e7d7bcbdeab7aa442a0b76de204792

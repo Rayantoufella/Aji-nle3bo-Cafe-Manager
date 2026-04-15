@@ -1,6 +1,14 @@
 <?php
-require_once __DIR__ ."/../models/session.php";
+namespace App\Controllers;
+use App\Models\SessionsModel;
+use App\Models\DatabaseModel;
 
+// session_start();
+// if(!isset($_SESSION['user_id'])){
+    
+//         header('Location: index.php');
+//         exit();
+//     }
 class SessionsController {
 
     private $model;

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Controllers;
+namespace App\controller;
 
-use App\Models\Reservation;
+use App\models\Reservation;
 
 class ReservationController {
     private $reservationModel;

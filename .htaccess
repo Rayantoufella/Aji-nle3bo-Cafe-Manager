@@ -1,0 +1,28 @@
+RewriteEngine On
+RewriteBase /Aji-nle3bo-Cafe-Manager/
+
+# Disable directory listing and MultiViews
+Options -Indexes -MultiViews
+
+# -----------------------------------------------------------------
+# Security Rules
+# -----------------------------------------------------------------
+
+# Block direct access to app folder except assets
+RewriteCond %{REQUEST_URI} ^/Aji-nle3bo-Cafe-Manager/app/ [NC]
+RewriteCond %{REQUEST_URI} !\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf)$ [NC]
+RewriteRule ^ - [F,L]
+
+# Block access to hidden dotfiles (.env, .git, .htaccess etc)
+RewriteRule (^\.|/\.) - [F,L]
+
+# -----------------------------------------------------------------
+# Router
+# -----------------------------------------------------------------
+
+# Serve existing files directly
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Route everything ebolse to public/index.php
+RewriteRule ^(.*)$ public/index.php?url=$1 [QSA,L]

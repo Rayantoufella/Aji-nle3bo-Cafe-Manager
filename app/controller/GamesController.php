@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\Game;
-use App\Controller\CategoryController;
+use App\Controllers\CategoryController;
 
 // session_start();
 // if(!isset($_SESSION['user_id'])){
@@ -66,7 +66,7 @@ class GameController {
     public function update(){
 
         $catController = new CategoryController();
-        $cats = $catController->getAllCategories();
+        $cats = $catController->getCategories($_GET['category_id']);
         
         $id = $_GET['id'];
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
@@ -83,7 +83,7 @@ class GameController {
 
             $this->gameModel->update($id, $name, $category_id, $nb_players, $duration, $difficulty, $description, $status);
 
-            header('Location: dashboard.php');
+            header('Location: /updategames');
             exit();
         }
         $game = $this->gameModel->findById($id);
