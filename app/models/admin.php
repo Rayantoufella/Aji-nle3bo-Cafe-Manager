@@ -8,9 +8,7 @@ class AdminModel {
         $this->pdo = $pdo;
     }
 
-    // ================================================================
-    //  MODULE 1 — GAMES
-    // ================================================================
+
 
     public function getAllGames() {
         $stmt = $this->pdo->prepare("SELECT * FROM games");
@@ -50,10 +48,6 @@ class AdminModel {
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
-
-    // ================================================================
-    //  MODULE 2 — RESERVATIONS
-    // ================================================================
 
     public function getAllReservations() {
         $stmt = $this->pdo->prepare("SELECT * FROM reservations ORDER BY date DESC");
@@ -101,10 +95,6 @@ class AdminModel {
         $stmt->execute([$status]);
         return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
-
-    // ================================================================
-    //  MODULE 3 — SESSIONS
-    // ================================================================
 
     public function getAllSessions() {
         $stmt = $this->pdo->prepare("SELECT * FROM sessions ORDER BY start_time DESC");
@@ -179,10 +169,6 @@ class AdminModel {
         $stmt->execute([$user_id]);
         return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
-
-    // ================================================================
-    //  TABLES
-    // ================================================================
 
     public function getAllTables() {
         $stmt = $this->pdo->prepare("SELECT * FROM tables");

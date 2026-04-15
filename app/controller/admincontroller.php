@@ -19,16 +19,10 @@ class AdminController {
         $this->tablesModel        = new TablesModel($pdo);
     }
 
-    // ================================================================
-    //  MODULE 1 — CATALOGUE DE JEUX (US3)
-    // ================================================================
 
-    /** List all games */
     public function listGames() {
         return $this->gamesModel->getAll();
     }
-
-    /** Get one game detail */
     public function showGame($id) {
         $game = $this->gamesModel->getById($id);
         if (!$game) {
@@ -37,7 +31,6 @@ class AdminController {
         return $game;
     }
 
-    /** Add a new game (US3) */
     public function addGame($name, $category, $min_players, $max_players, $duration, $description, $difficulty, $status) {
         if (empty($name) || empty($category) || empty($status)) {
             return ['error' => 'Missing required fields'];
@@ -46,7 +39,6 @@ class AdminController {
         return ['success' => 'Game added successfully'];
     }
 
-    /** Edit an existing game (US3) */
     public function editGame($id, $name, $category, $min_players, $max_players, $duration, $description, $difficulty, $status) {
         $game = $this->gamesModel->getById($id);
         if (!$game) {
@@ -56,7 +48,6 @@ class AdminController {
         return ['success' => 'Game updated successfully'];
     }
 
-    /** Delete a game (US3) */
     public function deleteGame($id) {
         $game = $this->gamesModel->getById($id);
         if (!$game) {
@@ -66,7 +57,6 @@ class AdminController {
         return ['success' => 'Game deleted successfully'];
     }
 
-    /** Filter games by category (US4) */
     public function filterGamesByCategory($category) {
         if (empty($category)) {
             return ['error' => 'Category is required'];
@@ -74,22 +64,16 @@ class AdminController {
         return $this->gamesModel->getByCategory($category);
     }
 
-    // ================================================================
-    //  MODULE 2 — RESERVATIONS (US8)
-    // ================================================================
 
-    /** Get all reservations for today (US8) */
     public function getTodayReservations() {
         $today = date('Y-m-d');
         return $this->reservationsModel->getByDate($today);
     }
 
-    /** Get all reservations (full list) */
     public function listReservations() {
         return $this->reservationsModel->getAll();
     }
 
-    /** Get one reservation detail */
     public function showReservation($id) {
         $reservation = $this->reservationsModel->getById($id);
         if (!$reservation) {
@@ -98,7 +82,6 @@ class AdminController {
         return $reservation;
     }
 
-    /** Confirm a reservation (US8) */
     public function confirmReservation($id) {
         $reservation = $this->reservationsModel->getById($id);
         if (!$reservation) {
@@ -111,7 +94,6 @@ class AdminController {
         return ['success' => 'Reservation confirmed'];
     }
 
-    /** Cancel a reservation (US8) */
     public function cancelReservation($id) {
         $reservation = $this->reservationsModel->getById($id);
         if (!$reservation) {
@@ -124,7 +106,6 @@ class AdminController {
         return ['success' => 'Reservation cancelled'];
     }
 
-    /** Check available tables for a given date and time slot (US5) */
     public function checkAvailability($date, $time_slot) {
         if (empty($date) || empty($time_slot)) {
             return ['error' => 'Date and time slot are required'];
@@ -132,17 +113,11 @@ class AdminController {
         return $this->tablesModel->getAvailable($date, $time_slot);
     }
 
-    // ================================================================
-    //  MODULE 3 — SESSIONS (US9, US10, US11, US12)
-    // ================================================================
-
-    /** Start a session: link reservation + game + table (US9) */
     public function startSession($reservationId, $gameId, $tableId) {
         if (empty($reservationId) || empty($gameId) || empty($tableId)) {
             return ['error' => 'reservation_id, game_id and table_id are required'];
         }
 
-        // Validate all three exist
         $reservation = $this->reservationsModel->getById($reservationId);
         if (!$reservation) {
             return ['error' => 'Reservation not found'];
@@ -158,7 +133,6 @@ class AdminController {
             return ['error' => 'Table not found'];
         }
 
-        // Check no active session on that table already
         $activeSessions = $this->sessionsModel->getByTable($tableId);
         foreach ($activeSessions as $s) {
             if ($s['status'] === 'active') {
@@ -168,13 +142,10 @@ class AdminController {
 
         $sessionId = $this->sessionsModel->startSession($gameId, $tableId, $reservation['user_id']);
 
-        // Mark table as occupied
         $this->tablesModel->updateStatus($tableId, 'occupied');
 
         return ['success' => 'Session started', 'session_id' => $sessionId];
     }
-
-    /** Dashboard: all active sessions with game and elapsed time (US10) */
     public function getActiveSessions() {
         $sessions = $this->sessionsModel->getActive();
         $dashboard = [];
@@ -198,9 +169,8 @@ class AdminController {
         return $dashboard;
     }
 
-    /** End a session and free the table (US11) */
     public function endSession($sessionId) {
-        $session = $this->sessionsModel->getById($sessionId);
+        $session = $this->sessionsModel->getSessionsById($sessionId);
         if (!$session) {
             return ['error' => 'Session not found'];
         }
@@ -225,7 +195,7 @@ class AdminController {
 
     /** Full session history with details (US12) */
     public function getSessionHistory() {
-        return $this->sessionsModel->getAll();
+        return $this->sessionsModel->getAllSessions();
     }
 
     /** Filter history by game (US12) */
@@ -262,7 +232,7 @@ class AdminController {
 
     /** Get duration of a finished session */
     public function getSessionDuration($sessionId) {
-        $session = $this->sessionsModel->getById($sessionId);
+        $session = $this->sessionsModel->getSessionsById($sessionId);
         if (!$session) {
             return ['error' => 'Session not found'];
         }
