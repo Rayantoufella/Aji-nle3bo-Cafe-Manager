@@ -1,6 +1,8 @@
 <?php
 
 namespace App\models;
+use App\Models\Database;
+
 
 use PDO;
 
@@ -13,7 +15,7 @@ class Table {
     private $db;
 
     public function __construct() {
-        $this->db = DatabaseModel::getConnection();
+        $this->db = Database::getConnection();
     }
 
     public function getAll() {
