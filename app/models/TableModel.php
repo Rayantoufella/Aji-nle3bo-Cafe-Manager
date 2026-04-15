@@ -1,12 +1,12 @@
 <?php
 
-namespace App\models;
+namespace App\Models;
 use App\Models\Database;
 
 
 use PDO;
 
-class Table {
+class TableModel {
     protected $id;
     protected $number;
     protected $capacity;
@@ -15,7 +15,8 @@ class Table {
     private $db;
 
     public function __construct() {
-        $this->db = Database::getConnection();
+        $database = new Database();
+        $this->db = $database->connect();
     }
 
     public function getAll() {
