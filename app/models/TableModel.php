@@ -13,7 +13,7 @@ class Table {
     private $db;
 
     public function __construct() {
-        $this->db = dbModel::getConnection();
+        $this->db = DatabaseModel::getConnection();
     }
 
     public function getAll() {
