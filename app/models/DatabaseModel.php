@@ -4,6 +4,7 @@ use PDO;
 use PDOException;
 
 
+
 class Database
 {
     private $host = DB_HOST;
