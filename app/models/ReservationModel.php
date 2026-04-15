@@ -22,7 +22,7 @@ class Reservation {
     private $db;
 
     public function __construct() {
-        $this->db = \app\models\dbModel::getConnection();
+        $this->db = \app\models\Database::connect();
     }
 
    
