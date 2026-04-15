@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\Game;
 use App\Controllers\CategoryController;
+use App\Models\GameModel;
 
 // session_start();
 // if(!isset($_SESSION['user_id'])){
@@ -17,7 +18,7 @@ class GameController {
     private $gameModel;
 
     public function __construct() {
-        $this->gameModel = new Game();
+        $this->gameModel = new GameModel();
     }
 
     public function index() {

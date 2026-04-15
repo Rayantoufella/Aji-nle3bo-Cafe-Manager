@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 use App\Models\AdminModel;
-use App\Models\Database;
+use App\Models\DatabaseModel;
 use PDO;
 use PDOException;
 

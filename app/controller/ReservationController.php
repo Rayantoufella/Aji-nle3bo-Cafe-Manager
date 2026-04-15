@@ -2,13 +2,13 @@
 
 namespace App\Controllers;
 
-use App\Models\Reservation;
+use App\Models\ReservationModel; 
 
 class ReservationController {
     private $reservationModel;
 
     public function __construct() {
-        $this->reservationModel = new Reservation();
+        $this->reservationModel = new ReservationModel();
     }
 
     public function index() {

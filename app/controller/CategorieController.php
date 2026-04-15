@@ -1,7 +1,9 @@
 <?php
 namespace App\Controllers;
 
-use App\Models\Category;
+
+use App\Models\CategoryModel;
+
 // session_start();
 // if(!isset($_SESSION['user_id'])){
     
@@ -16,7 +18,7 @@ class CategoryController {
 
     public function __construct()
     {
-        $this->categoryModel = new Category();
+        $this->categoryModel = new CategoryModel();
     }
 
     public function index(){
