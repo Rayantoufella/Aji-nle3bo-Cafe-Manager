@@ -7,7 +7,7 @@ CREATE TABLE users (
     email VARCHAR(255),
     password VARCHAR(255),
     role ENUM('admin', 'user'),
-    created_at DATETIME
+    created_at DATETIME default CURRENT_TIMESTAMP
 );
 
 CREATE TABLE categories (
@@ -24,7 +24,7 @@ CREATE TABLE games (
     difficulty ENUM('easy', 'medium', 'hard'),
     description TEXT,
     status ENUM('available', 'unavailable'),
-    created_at TIMESTAMP,
+    created_at TIMESTAMP default CURRENT_TIMESTAMP,
 
     FOREIGN KEY (categories_id) REFERENCES categories(id)
 );
@@ -44,8 +44,8 @@ CREATE TABLE reservations (
     reservation_date DATE,
     reservation_time TIME,
     table_id INT,
-    status ENUM('pending', 'confirmed', 'cancelled') DEFAULT 'pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('pending', 'confirmed', 'cancelled') AS DEFAULT 'pending',
+    created_at TIMESTAMP default CURRENT_TIMESTAMP,
 
     FOREIGN KEY (table_id) REFERENCES tables(id)
 );
