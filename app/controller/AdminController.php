@@ -5,6 +5,13 @@ require_once 'Model/GamesModel.php';
 require_once 'Model/ReservationsModel.php';
 require_once 'Model/TablesModel.php';
 
+// session_start();
+// if(!isset($_SESSION['user_id'])){
+    
+//         header('Location: index.php');
+//         exit();
+//     }
+
 class AdminController {
 
     private $sessionsModel;
