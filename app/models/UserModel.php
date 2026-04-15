@@ -26,10 +26,10 @@ class UserModel {
                     $this->email = $email;
         $this->password = $password;
         
-        $this->stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email") ; 
-        $this->stmt->execute(["email" => $this->email]) ; 
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email") ; 
+        $stmt->execute(["email" => $this->email]) ; 
 
-        $user = $this->stmt->fetch(PDO::FETCH_ASSOC) ;
+        $user = $stmt->fetch(PDO::FETCH_ASSOC) ;
         
         if($user && password_verify($this->password,$user['password'])){
             return $user ;
@@ -46,8 +46,8 @@ class UserModel {
         $this->password = $password;
 
         $query = "INSERT INTO users (username,email,password) VALUES (:username,:email,:password)" ;
-        $this->stmt = $this->db->prepare($query) ;
-        $this->stmt->execute(["username" => $this->username,"email" => $this->email,"password" => $this->password]) ;
+        $stmt = $this->db->prepare($query) ;
+        $stmt->execute(["username" => $this->username,"email" => $this->email,"password" => $this->password]) ;
         return true ;
         }catch(PDOException $e){
             return false ;
