@@ -17,7 +17,7 @@ class Table {
     }
 
     public function getAll() {
-        $stmt = $this->db->prepare("SELECT * FROM tables_cafe");
+        $stmt = $this->db->prepare("SELECT * FROM tables");
         $stmt->execute();
         return $stmt->fetchAll();
     }
