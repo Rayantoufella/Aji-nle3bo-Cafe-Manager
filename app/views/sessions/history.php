@@ -1,4 +1,10 @@
-<?php $pageId='sessions'; $pageTitle='Session History'; require __DIR__.'/../layout/header.php'; ?>
+<?php 
+$pageId='sessions'; 
+$pageTitle='Session History'; 
+require __DIR__.'/../layout/header.php';
+// Initialize variables
+$sessions = $sessions ?? [];
+?>
 
 <div class="page-header">
   <div style="display:flex;align-items:center;gap:12px">

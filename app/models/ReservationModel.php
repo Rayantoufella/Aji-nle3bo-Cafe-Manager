@@ -162,4 +162,74 @@ class ReservationModel {
     public function isConflict($tableId, $date, $time) {
         return !$this->checkAvailability($tableId, $date, $time);
     }
+
+    // Get all reservations
+    public function getAll() {
+        $sql = "SELECT r.*, t.table_number FROM reservations r 
+                LEFT JOIN tables_cafe t ON r.table_id = t.id 
+                ORDER BY r.reservation_date DESC, r.reservation_time DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Get today's reservations
+    public function getToday() {
+        $today = date('Y-m-d');
+        $sql = "SELECT r.*, t.table_number FROM reservations r 
+                LEFT JOIN tables_cafe t ON r.table_id = t.id 
+                WHERE DATE(r.reservation_date) = :today 
+                ORDER BY r.reservation_time ASC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['today' => $today]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Get reservations by user ID
+    public function getByUserId($userId) {
+        $sql = "SELECT r.*, t.table_number FROM reservations r 
+                LEFT JOIN tables_cafe t ON r.table_id = t.id 
+                WHERE r.user_id = :user_id 
+                ORDER BY r.reservation_date DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['user_id' => (int)$userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Count total reservations
+    public function getTotalCount() {
+        $sql = "SELECT COUNT(*) as count FROM reservations";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['count'] ?? 0;
+    }
+
+    // Count today's reservations
+    public function getTodayCount() {
+        $today = date('Y-m-d');
+        $sql = "SELECT COUNT(*) as count FROM reservations WHERE DATE(reservation_date) = :today";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['today' => $today]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['count'] ?? 0;
+    }
+
+    // Count pending reservations
+    public function getPendingCount() {
+        $sql = "SELECT COUNT(*) as count FROM reservations WHERE status = 'pending'";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['count'] ?? 0;
+    }
+
+    // Count confirmed reservations
+    public function getConfirmedCount() {
+        $sql = "SELECT COUNT(*) as count FROM reservations WHERE status = 'confirmed'";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['count'] ?? 0;
+    }
 }

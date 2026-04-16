@@ -1,4 +1,13 @@
-<?php $pageId='sessions'; $pageTitle='Start Session'; require __DIR__.'/../layout/header.php'; ?>
+<?php 
+$pageId='sessions'; 
+$pageTitle='Start Session'; 
+require __DIR__.'/../layout/header.php';
+// Initialize variables
+$games = $games ?? [];
+$tables = $tables ?? [];
+$allTables = $allTables ?? [];
+$confirmedRes = $confirmedRes ?? [];
+?>
 
 <div class="page-header">
   <div style="display:flex;align-items:center;gap:12px">

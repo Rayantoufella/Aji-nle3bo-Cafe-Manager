@@ -1,4 +1,10 @@
-<?php $pageId='reservations'; $pageTitle='New Reservation'; require __DIR__.'/../layout/header.php'; ?>
+<?php 
+$pageId='reservations'; 
+$pageTitle='New Reservation'; 
+require __DIR__.'/../layout/header.php';
+// Initialize variables
+$tables = $tables ?? [];
+?>
 
 <div class="page-header">
   <div style="display:flex;align-items:center;gap:12px">

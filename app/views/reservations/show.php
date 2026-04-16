@@ -1,5 +1,23 @@
-<?php $pageId='reservations'; $pageTitle='Reservation #'.$reservation['id']; require __DIR__.'/../layout/header.php';
-$sc=match($reservation['status']??''){
+<?php
+$pageId='reservations';
+// Initialize reservation variable to avoid undefined warnings
+$reservation = $reservation ?? [
+    'id' => 'N/A',
+    'status' => 'pending',
+    'client_name' => '',
+    'phone' => '',
+    'reservation_date' => date('Y-m-d'),
+    'reservation_time' => '00:00',
+    'number_of_people' => 0,
+    'table_number' => 'N/A',
+    'capacity' => 0,
+    'created_at' => date('Y-m-d H:i:s')
+];
+
+$pageTitle='Reservation #'.$reservation['id'];
+require __DIR__.'/../layout/header.php';
+
+$sc=match($reservation['status']??'pending'){
   'confirmed'=>'badge-success','pending'=>'badge-warning',
   'cancelled'=>'badge-danger','completed'=>'badge-info',default=>'badge-gray'
 };
@@ -16,7 +34,7 @@ $sc=match($reservation['status']??''){
     </div>
   </div>
   <div class="page-header-actions">
-    <?php if(($reservation['status']??'')==='pending'): ?>
+    <?php if(($reservation['status'] ?? 'pending') === 'pending'): ?>
     <form method="POST" action="<?= base() ?>/reservations/<?= $reservation['id'] ?>/confirm">
       <button type="submit" class="btn btn-success">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
@@ -24,7 +42,7 @@ $sc=match($reservation['status']??''){
       </button>
     </form>
     <?php endif; ?>
-    <?php if(in_array($reservation['status']??'',['pending','confirmed'])): ?>
+    <?php if(in_array($reservation['status'] ?? 'pending', ['pending', 'confirmed'])): ?>
     <form method="POST" action="<?= base() ?>/reservations/<?= $reservation['id'] ?>/cancel" onsubmit="return confirm('Cancel this reservation?')">
       <button type="submit" class="btn btn-danger">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -41,40 +59,40 @@ $sc=match($reservation['status']??''){
       <!-- Header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
         <div style="display:flex;align-items:center;gap:14px">
-          <div class="avatar" style="width:48px;height:48px;font-size:18px"><?= strtoupper(substr($reservation['client_name'],0,1)) ?></div>
+          <div class="avatar" style="width:48px;height:48px;font-size:18px"><?= strtoupper(substr($reservation['client_name'] ?? '', 0, 1)) ?></div>
           <div>
-            <div style="font-size:18px;font-weight:800"><?= h($reservation['client_name']) ?></div>
-            <div style="font-size:13px;color:var(--muted)"><?= h($reservation['phone']??'No phone') ?></div>
+            <div style="font-size:18px;font-weight:800"><?= h($reservation['client_name'] ?? 'Unknown') ?></div>
+            <div style="font-size:13px;color:var(--muted)"><?= h($reservation['phone'] ?? 'No phone') ?></div>
           </div>
         </div>
-        <span class="badge badge-dot <?= $sc ?>" style="font-size:12px;padding:5px 12px"><?= ucfirst(h($reservation['status'])) ?></span>
+        <span class="badge badge-dot <?= $sc ?>" style="font-size:12px;padding:5px 12px"><?= ucfirst(h($reservation['status'] ?? 'pending')) ?></span>
       </div>
 
       <div class="detail-grid">
         <div class="detail-item">
           <div class="detail-item-label">📅 Date</div>
-          <div class="detail-item-value"><?= date('l, M d Y',strtotime($reservation['reservation_date'])) ?></div>
+          <div class="detail-item-value"><?= date('l, M d Y', strtotime($reservation['reservation_date'] ?? 'now')) ?></div>
         </div>
         <div class="detail-item">
           <div class="detail-item-label">🕐 Time</div>
-          <div class="detail-item-value" style="color:var(--primary)"><?= date('H:i',strtotime($reservation['reservation_time'])) ?></div>
+          <div class="detail-item-value" style="color:var(--primary)"><?= date('H:i', strtotime($reservation['reservation_time'] ?? '00:00')) ?></div>
         </div>
         <div class="detail-item">
           <div class="detail-item-label">👥 Group Size</div>
-          <div class="detail-item-value"><?= $reservation['number_of_people'] ?> persons</div>
+          <div class="detail-item-value"><?= (int)($reservation['number_of_people'] ?? 0) ?> persons</div>
         </div>
         <div class="detail-item">
           <div class="detail-item-label">🪑 Table</div>
-          <div class="detail-item-value">Table #<?= h($reservation['table_number']??'N/A') ?>
+          <div class="detail-item-value">Table #<?= h($reservation['table_number'] ?? 'N/A') ?>
             <?php if(!empty($reservation['capacity'])): ?>
-              <span class="badge badge-info" style="margin-left:6px"><?= $reservation['capacity'] ?> seats</span>
+              <span class="badge badge-info" style="margin-left:6px"><?= (int)$reservation['capacity'] ?> seats</span>
             <?php endif; ?>
           </div>
         </div>
       </div>
 
       <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)">
-        Booked on <?= date('M d, Y \a\t H:i',strtotime($reservation['created_at']??'now')) ?>
+        Booked on <?= date('M d, Y \a\t H:i', strtotime($reservation['created_at'] ?? 'now')) ?>
       </div>
     </div>
     <div class="card-footer">

@@ -1,4 +1,10 @@
-<?php $pageId='categories'; $pageTitle='Categories'; require __DIR__.'/../layout/header.php'; ?>
+<?php
+$pageId='categories';
+$pageTitle='Categories';
+require __DIR__.'/../layout/header.php';
+// Initialize variables
+$cats = $cats ?? [];
+?>
 
 <div class="page-header">
   <div><h1>Categories</h1><div class="page-header-sub">Organize games into groups for easy filtering</div></div>

@@ -1,18 +1,35 @@
-<?php $pageId='games'; $pageTitle='Edit Game'; require __DIR__.'/../layout/header.php'; ?>
+<?php 
+$pageId='games'; 
+$pageTitle='Edit Game'; 
+require __DIR__.'/../layout/header.php';
+// Initialize variables
+$game = $game ?? [
+    'id' => 0,
+    'name' => 'Unknown',
+    'category_id' => '',
+    'nb_players' => 0,
+    'duration' => 0,
+    'difficulty' => 'medium',
+    'description' => '',
+    'image_url' => '',
+    'status' => 'available'
+];
+$categories = $categories ?? [];
+?>
 
 <div class="page-header">
   <div style="display:flex;align-items:center;gap:12px">
-    <a href="<?= base() ?>/games/<?= $game['id'] ?>" class="btn btn-secondary btn-icon sm" title="Back">
+    <a href="<?= base() ?>/games/<?= (int)($game['id'] ?? 0) ?>" class="btn btn-secondary btn-icon sm" title="Back">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
     </a>
-    <div><h1>Edit Game</h1><div class="page-header-sub">Updating: <?= h($game['name']) ?></div></div>
+    <div><h1>Edit Game</h1><div class="page-header-sub">Updating: <?= h($game['name'] ?? 'Unknown') ?></div></div>
   </div>
 </div>
 
 <div class="card" style="max-width:700px">
   <div class="card-header"><span class="card-title">Game Details</span></div>
   <div class="card-body">
-    <form method="POST" action="<?= base() ?>/games/<?= $game['id'] ?>/update">
+    <form method="POST" action="<?= base() ?>/games/<?= (int)($game['id'] ?? 0) ?>/update">
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Game Name <span>*</span></label>

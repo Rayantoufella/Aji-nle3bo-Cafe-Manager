@@ -1,4 +1,13 @@
-<?php $pageId='sessions'; $pageTitle='Sessions'; require __DIR__.'/../layout/header.php'; ?>
+<?php
+$pageId='sessions';
+$pageTitle='Sessions';
+require __DIR__.'/../layout/header.php';
+// Initialize variables
+$activeSessions = $activeSessions ?? [];
+$activeCount = $activeCount ?? 0;
+$todayCount = $todayCount ?? 0;
+$totalCount = $totalCount ?? 0;
+?>
 
 <div class="page-header">
   <div>

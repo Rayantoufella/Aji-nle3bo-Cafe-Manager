@@ -1,4 +1,16 @@
-<?php $pageId='reservations'; $pageTitle='Reservations'; require __DIR__.'/../layout/header.php'; ?>
+<?php
+$pageId='reservations';
+$pageTitle='Reservations';
+require __DIR__.'/../layout/header.php';
+
+// Initialize variables if not defined
+$reservations = $reservations ?? [];
+$totalCount = $totalCount ?? 0;
+$todayCount = $todayCount ?? 0;
+$pendingCount = $pendingCount ?? 0;
+$confirmedCount = $confirmedCount ?? 0;
+$filter = $filter ?? 'all';
+?>
 
 <div class="page-header">
   <div>

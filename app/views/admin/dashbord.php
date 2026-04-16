@@ -1,4 +1,18 @@
-<?php $pageId='dashboard'; $pageTitle='Dashboard'; require __DIR__.'/../layout/header.php'; ?>
+<?php 
+$pageId='dashboard'; 
+$pageTitle='Dashboard'; 
+require __DIR__.'/../layout/header.php';
+// Initialize variables
+$totalReservations = $totalReservations ?? 0;
+$activeSessions = $activeSessions ?? [];
+$availableTables = $availableTables ?? 0;
+$totalTables = $totalTables ?? 0;
+$todayReservations = $todayReservations ?? 0;
+$mpg = $mpg ?? null;
+$recentRes = $recentRes ?? [];
+$activeList = $activeList ?? [];
+$popularGames = $popularGames ?? [];
+?>
 
 <!-- STATS -->
 <div class="page-header">

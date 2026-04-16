@@ -12,12 +12,31 @@ class ReservationController {
     }
 
     public function index() {
-        $reservations = $this->reservationModel->getUpcoming();
-        require_once '../app/views/games/index.php';
+        $filter = $_GET['filter'] ?? 'all';
+
+        // Get all reservations based on filter
+        if($filter === 'today'){
+            $reservations = $this->reservationModel->getToday();
+        } elseif($filter === 'upcoming'){
+            $reservations = $this->reservationModel->getUpcoming();
+        } elseif($filter === 'mine'){
+            $userId = $_SESSION['user_id'] ?? null;
+            $reservations = $userId ? $this->reservationModel->getByUserId($userId) : [];
+        } else {
+            $reservations = $this->reservationModel->getAll();
+        }
+
+        // Get statistics
+        $totalCount = $this->reservationModel->getTotalCount();
+        $todayCount = $this->reservationModel->getTodayCount();
+        $pendingCount = $this->reservationModel->getPendingCount();
+        $confirmedCount = $this->reservationModel->getConfirmedCount();
+
+        require_once dirname(__DIR__) . '/views/reservations/index.php';
     }
 
     public function create() {
-        require_once '../app/views/games/create.php';
+        require_once dirname(__DIR__) . '/views/reservations/create.php';
     }
 
     public function store() {
@@ -44,7 +63,7 @@ class ReservationController {
 
     public function show($id) {
         $reservation = $this->reservationModel->getById($id);
-        require_once '../app/views/games/show.php';
+        require_once dirname(__DIR__) . '/views/reservations/show.php';
     }
 
     public function cancel($id) {

@@ -1,6 +1,28 @@
 <?php
 // helpers available in all pages
 function base(){ return '/Aji-nle3bo-Cafe-Manager'; }
+
+// Flash message helper
+function flash($key = null){
+    if(!isset($_SESSION['flash'])){
+        $_SESSION['flash'] = [];
+    }
+    if($key === null){
+        return $_SESSION['flash'];
+    }
+    if(isset($_SESSION['flash'][$key])){
+        $value = $_SESSION['flash'][$key];
+        unset($_SESSION['flash'][$key]);
+        return $value;
+    }
+    return null;
+}
+
+// HTML escape helper
+function h($text){
+    return htmlspecialchars($text ?? '', ENT_QUOTES, 'UTF-8');
+}
+
 $_user   = $_SESSION['username']  ?? 'User';
 $_role   = $_SESSION['user_role'] ?? 'user';
 $_init   = strtoupper(substr($_user, 0, 1));

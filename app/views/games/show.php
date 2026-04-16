@@ -1,8 +1,24 @@
-<?php $pageId='games'; $pageTitle=h($game['name']); require __DIR__.'/../layout/header.php';
-$diff = $game['difficulty']??'medium';
+<?php
+$pageId='games';
+require __DIR__.'/../layout/header.php';
+// Initialize game variable with defaults
+$game = $game ?? [
+    'id' => 0,
+    'name' => 'Unknown Game',
+    'status' => 'available',
+    'difficulty' => 'medium',
+    'description' => '',
+    'category_name' => 'N/A',
+    'nb_players' => 0,
+    'duration' => 0,
+    'image_url' => ''
+];
+$pageTitle = h($game['name']);
+
+$diff = $game['difficulty'] ?? 'medium';
 $diffClass = ['easy'=>'diff-easy','medium'=>'diff-medium','hard'=>'diff-hard'][$diff]??'';
 $grads=['linear-gradient(135deg,#667eea 0%,#764ba2 100%)','linear-gradient(135deg,#f093fb 0%,#f5576c 100%)','linear-gradient(135deg,#4facfe 0%,#00f2fe 100%)','linear-gradient(135deg,#43e97b 0%,#38f9d7 100%)','linear-gradient(135deg,#fa709a 0%,#fee140 100%)','linear-gradient(135deg,#a18cd1 0%,#fbc2eb 100%)'];
-$grad = $grads[$game['id']%6];
+$grad = $grads[(int)($game['id'] ?? 0) % 6];
 ?>
 
 <div class="page-header">
@@ -16,11 +32,11 @@ $grad = $grads[$game['id']%6];
     </div>
   </div>
   <div class="page-header-actions">
-    <a href="<?= base() ?>/games/<?= $game['id'] ?>/edit" class="btn btn-secondary">
+    <a href="<?= base() ?>/games/<?= $game['id'] ?? 0 ?>/edit" class="btn btn-secondary">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
       Edit
     </a>
-    <form method="POST" action="<?= base() ?>/games/<?= $game['id'] ?>/delete" onsubmit="return confirm('Delete this game? This cannot be undone.')">
+    <form method="POST" action="<?= base() ?>/games/<?= $game['id'] ?? 0 ?>/delete" onsubmit="return confirm('Delete this game? This cannot be undone.')">
       <button type="submit" class="btn btn-danger">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
         Delete
@@ -42,11 +58,11 @@ $grad = $grads[$game['id']%6];
       <?php endif; ?>
     </div>
     <div class="card-body" style="padding:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-        <span class="badge <?= $game['status']==='available' ? 'badge-success badge-dot' : 'badge-danger badge-dot' ?>"><?= ucfirst(h($game['status'])) ?></span>
-        <span class="badge badge-info"><?= h($game['category_name']??'N/A') ?></span>
-        <span class="badge badge-gray <?= $diffClass ?>"><?= ucfirst($diff) ?> difficulty</span>
-      </div>
+       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+         <span class="badge <?= ($game['status'] ?? 'available')==='available' ? 'badge-success badge-dot' : 'badge-danger badge-dot' ?>"><?= ucfirst(h($game['status'] ?? 'available')) ?></span>
+         <span class="badge badge-info"><?= h($game['category_name'] ?? 'N/A') ?></span>
+         <span class="badge badge-gray <?= $diffClass ?>"><?= ucfirst($diff) ?> difficulty</span>
+       </div>
     </div>
   </div>
 
@@ -55,24 +71,24 @@ $grad = $grads[$game['id']%6];
     <div class="card-body">
       <h2 style="font-size:22px;font-weight:800;margin-bottom:18px"><?= h($game['name']) ?></h2>
 
-      <div class="detail-grid" style="margin-bottom:22px">
-        <div class="detail-item">
-          <div class="detail-item-label">Category</div>
-          <div class="detail-item-value"><?= h($game['category_name']??'N/A') ?></div>
-        </div>
-        <div class="detail-item">
-          <div class="detail-item-label">Max Players</div>
-          <div class="detail-item-value"><?= h($game['nb_players']) ?></div>
-        </div>
-        <div class="detail-item">
-          <div class="detail-item-label">Duration</div>
-          <div class="detail-item-value"><?= h($game['duration']) ?> min</div>
-        </div>
-        <div class="detail-item">
-          <div class="detail-item-label">Difficulty</div>
-          <div class="detail-item-value <?= $diffClass ?>"><?= ucfirst($diff) ?></div>
-        </div>
-      </div>
+       <div class="detail-grid" style="margin-bottom:22px">
+         <div class="detail-item">
+           <div class="detail-item-label">Category</div>
+           <div class="detail-item-value"><?= h($game['category_name'] ?? 'N/A') ?></div>
+         </div>
+         <div class="detail-item">
+           <div class="detail-item-label">Max Players</div>
+           <div class="detail-item-value"><?= h((string)($game['nb_players'] ?? 0)) ?></div>
+         </div>
+         <div class="detail-item">
+           <div class="detail-item-label">Duration</div>
+           <div class="detail-item-value"><?= h((string)($game['duration'] ?? 0)) ?> min</div>
+         </div>
+         <div class="detail-item">
+           <div class="detail-item-label">Difficulty</div>
+           <div class="detail-item-value <?= $diffClass ?>"><?= ucfirst($diff) ?></div>
+         </div>
+       </div>
 
       <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Description</h3>
       <p style="font-size:13.5px;color:var(--text-2);line-height:1.8">
@@ -80,8 +96,8 @@ $grad = $grads[$game['id']%6];
       </p>
     </div>
     <div class="card-footer" style="display:flex;gap:10px">
-      <a href="<?= base() ?>/games/<?= $game['id'] ?>/edit" class="btn btn-primary">Edit Game</a>
-      <a href="<?= base() ?>/games" class="btn btn-ghost">← Back to Catalogue</a>
+       <a href="<?= base() ?>/games/<?= $game['id'] ?? 0 ?>/edit" class="btn btn-primary">Edit Game</a>
+       <a href="<?= base() ?>/games" class="btn btn-ghost">← Back to Catalogue</a>
     </div>
   </div>
 </div>

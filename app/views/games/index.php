@@ -1,4 +1,15 @@
-<?php $pageId='games'; $pageTitle='Game Catalogue'; require __DIR__.'/../layout/header.php'; ?>
+<?php
+$pageId='games';
+$pageTitle='Game Catalogue';
+require __DIR__.'/../layout/header.php';
+
+// Initialize variables with defaults
+$games = $games ?? [];
+$categories = $categories ?? [];
+$availableCount = $availableCount ?? 0;
+$inUseCount = $inUseCount ?? 0;
+$totalGames = $totalGames ?? 0;
+?>
 
 <div class="page-header">
   <div>
@@ -41,11 +52,11 @@
 <?php
 $grads=['linear-gradient(135deg,#667eea 0%,#764ba2 100%)','linear-gradient(135deg,#f093fb 0%,#f5576c 100%)','linear-gradient(135deg,#4facfe 0%,#00f2fe 100%)','linear-gradient(135deg,#43e97b 0%,#38f9d7 100%)','linear-gradient(135deg,#fa709a 0%,#fee140 100%)','linear-gradient(135deg,#a18cd1 0%,#fbc2eb 100%)','linear-gradient(135deg,#fccb90 0%,#d57eeb 100%)','linear-gradient(135deg,#a1c4fd 0%,#c2e9fb 100%)'];
 foreach ($games as $g):
-  $sc = $g['status']==='available' ? 'badge-success' : 'badge-danger';
-  $sl = $g['status']==='available' ? 'Available'    : 'In Use';
+  $sc = ($g['status'] ?? 'available')==='available' ? 'badge-success' : 'badge-danger';
+  $sl = ($g['status'] ?? 'available')==='available' ? 'Available'    : 'In Use';
   $diff = $g['difficulty']??'medium';
   $diffClass = ['easy'=>'diff-easy','medium'=>'diff-medium','hard'=>'diff-hard'][$diff] ?? '';
-  $grad = $grads[$g['id']%8];
+  $grad = $grads[(int)($g['id'] ?? 0)%8];
 ?>
 <div class="game-card anim-up">
   <div class="game-card-img" style="background:<?= $grad ?>">
@@ -57,22 +68,22 @@ foreach ($games as $g):
     <div class="game-card-badge"><span class="badge <?= $sc ?> badge-dot"><?= $sl ?></span></div>
   </div>
   <div class="game-card-body">
-    <div class="game-card-cat"><?= h($g['category_name']??'Uncategorized') ?></div>
-    <div class="game-card-name"><?= h($g['name']) ?></div>
+    <div class="game-card-cat"><?= h($g['category_name'] ?? 'Uncategorized') ?></div>
+    <div class="game-card-name"><?= h($g['name'] ?? 'Unknown') ?></div>
     <div class="game-card-meta">
       <span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <?= $g['nb_players'] ?> players
+        <?= (int)($g['nb_players'] ?? 0) ?> players
       </span>
       <span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <?= $g['duration'] ?> min
+        <?= (int)($g['duration'] ?? 0) ?> min
       </span>
       <span class="<?= $diffClass ?>">● <?= ucfirst($diff) ?></span>
     </div>
     <div class="game-card-footer">
-      <a href="<?= base() ?>/games/<?= $g['id'] ?>" class="btn btn-primary btn-sm">View Details</a>
-      <a href="<?= base() ?>/games/<?= $g['id'] ?>/edit" class="btn btn-secondary btn-sm btn-icon" title="Edit">
+      <a href="<?= base() ?>/games/<?= (int)($g['id'] ?? 0) ?>" class="btn btn-primary btn-sm">View Details</a>
+      <a href="<?= base() ?>/games/<?= (int)($g['id'] ?? 0) ?>/edit" class="btn btn-secondary btn-sm btn-icon" title="Edit">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
       </a>
     </div>

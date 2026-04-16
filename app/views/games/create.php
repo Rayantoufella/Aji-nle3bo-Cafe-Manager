@@ -1,4 +1,9 @@
-<?php $pageId='games'; $pageTitle='Add New Game'; require __DIR__.'/../layout/header.php'; ?>
+<?php 
+$pageId='games'; 
+$pageTitle='Add New Game'; 
+require __DIR__.'/../layout/header.php';
+$categories = $categories ?? [];
+?>
 
 <div class="page-header">
   <div style="display:flex;align-items:center;gap:12px">
