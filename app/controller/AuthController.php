@@ -23,10 +23,24 @@ class AuthController
         session_start();
        try{
            if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            $username = $_POST['username'];
-            $email = $_POST['email'];
-            $password = $_POST['password'];
-            $confirm_password = $_POST['confirm_password'];
+            $username = trim($_POST['name'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $password = $_POST['password'] ?? '';
+            $confirm_password = $_POST['password_confirm'] ?? '';
+
+            // Validate empty fields
+            if(empty($username) || empty($email) || empty($password) || empty($confirm_password)){
+                $error = "All fields are required";
+                require dirname(__DIR__) . '/views/auth/registre.php';
+                exit();
+            }
+
+            // Validate email format
+            if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+                $error = "Please enter a valid email";
+                require dirname(__DIR__) . '/views/auth/registre.php';
+                exit();
+            }
 
             if($password !== $confirm_password){
                 $error = "Passwords do not match.";
@@ -34,12 +48,19 @@ class AuthController
                 exit();
             }
 
+            if(strlen($password) < 6){
+                $error = "Password must be at least 6 characters";
+                require dirname(__DIR__) . '/views/auth/registre.php';
+                exit();
+            }
+
             $this->userModel->create(['username' => $username, 'email' => $email, 'password' => $password]);
-            header('Location: /login');
+            $baseUrl = defined('BASE_URL') ? BASE_URL : '';
+            header('Location: ' . $baseUrl . '/login');
             exit();
            }
        }catch(PDOException $e){
-           exit('Error registering user: ' . $e->getMessage());
+            exit('Error registering user: ' . $e->getMessage());
        }
     }
 

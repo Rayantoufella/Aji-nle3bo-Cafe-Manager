@@ -1,14 +1,14 @@
 <?php
 
-namespace App\controller;
+namespace App\Controller;
 
-use App\models\Table;
+use App\Models\TableModel;
 
 class TableController {
     private $tableModel;
 
     public function __construct() {
-        $this->tableModel = new Table();
+        $this->tableModel = new TableModel();
     }
 
     public function index() {

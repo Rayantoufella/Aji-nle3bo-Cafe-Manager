@@ -473,7 +473,16 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
 
             <!-- Brand Logo from Login Page -->
             <div class="brand-right">
-                <div class="icon">🎲</div>
+                <div class="icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="3" ry="3"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5" fill="white" stroke="none"></circle>
+                        <circle cx="15.5" cy="15.5" r="1.5" fill="white" stroke="none"></circle>
+                        <circle cx="15.5" cy="8.5" r="1.5" fill="white" stroke="none"></circle>
+                        <circle cx="8.5" cy="15.5" r="1.5" fill="white" stroke="none"></circle>
+                        <circle cx="12" cy="12" r="1.5" fill="white" stroke="none"></circle>
+                    </svg>
+                </div>
                 <span class="name">Ajil L3bo Café</span>
             </div>
 
@@ -524,7 +533,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                 </div>
 
                 <!-- Email -->
-                <div class="field <?= isset($error) ? 'has-error' : '' ?>">
+                <div class="field <?= isset($error) && strpos($error, 'email') !== false ? 'has-error' : '' ?>">
                     <label for="email">Email Address</label>
                     <div class="field-wrap">
                         <span class="field-icon">
@@ -540,14 +549,14 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                             value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
                         >
                     </div>
-                    <?php if (isset($error)): ?>
+                    <?php if (isset($error) && strpos($error, 'email') !== false): ?>
                     <div class="error-msg">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="10"></circle>
                             <line x1="12" y1="8" x2="12" y2="12"></line>
                             <line x1="12" y1="16" x2="12.01" y2="16"></line>
                         </svg>
-                        Please enter a valid gaming email <!-- Static error message to match design -->
+                        <?= htmlspecialchars($error) ?>
                     </div>
                     <?php endif; ?>
                 </div>
