@@ -2,9 +2,7 @@
 
 namespace App\Controller;
 use App\Models\AdminModel;
-use App\Models\DatabaseModel;
-use PDO;
-use PDOException;
+
 
 // session_start();
 // if(!isset($_SESSION['user_id'])){

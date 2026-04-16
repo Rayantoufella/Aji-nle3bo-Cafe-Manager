@@ -47,9 +47,9 @@ class ReservationController {
         require_once '../app/views/games/show.php';
     }
 
-    public function cancel($id) {
-        $this->reservationModel->cancel($id);
-        header('Location: /index.php?action=cancelled');
-        exit();
-    }
+    // public function cancel($id) {
+    //     $this->reservationModel->cancel($id);
+    //     header('Location: /index.php?action=cancelled');
+    //     exit();
+    // }
 }
