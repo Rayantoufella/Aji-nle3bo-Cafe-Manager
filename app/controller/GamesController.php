@@ -2,9 +2,9 @@
 
 namespace App\Controllers;
 
-use App\Models\Game;
-use App\Controllers\CategoryController;
 use App\Models\GameModel;
+use App\Controllers\CategoriesController;
+
 
 // session_start();
 // if(!isset($_SESSION['user_id'])){
