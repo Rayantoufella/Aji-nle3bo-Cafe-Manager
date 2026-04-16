@@ -70,11 +70,11 @@ class ReservationModel {
     }
 
   
-    public function cancel($id) {
-        $sql = "UPDATE reservations SET status = 'cancelled' WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-        return $stmt->execute(['id' => (int)$id]);
-    }
+    // public function cancel($id) {
+    //     $sql = "UPDATE reservations SET status = 'cancelled' WHERE id = :id";
+    //     $stmt = $this->db->prepare($sql);
+    //     return $stmt->execute(['id' => (int)$id]);
+    // }
 
    
     public function getByUser($userId) {
@@ -159,7 +159,5 @@ class ReservationModel {
     }
 
    
-    public function isConflict($tableId, $date, $time) {
-        return !$this->checkAvailability($tableId, $date, $time);
-    }
+    
 }

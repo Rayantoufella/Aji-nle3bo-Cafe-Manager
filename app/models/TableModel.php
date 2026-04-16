@@ -1,12 +1,12 @@
 <?php
 
-namespace App\models;
-use App\Models\Database;
+namespace App\Models;
+use App\Models\DatabaseModel;
 
 
 use PDO;
 
-class Table {
+class TableModel {
     protected $id;
     protected $number;
     protected $capacity;
@@ -15,19 +15,19 @@ class Table {
     private $db;
 
     public function __construct() {
-        $this->db = Database::getConnection();
+        $this->db = (new DatabaseModel())->connect();
     }
 
     public function getAll() {
         $stmt = $this->db->prepare("SELECT * FROM tables");
         $stmt->execute();
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getById($id) {
         $stmt = $this->db->prepare("SELECT * FROM tables WHERE id = :id");
         $stmt->execute(['id' => (int)$id]);
-        return $stmt->fetch();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function create($number, $capacity) {
@@ -58,13 +58,13 @@ class Table {
     public function getAvailableTables() {
         $stmt = $this->db->prepare("SELECT * FROM tables WHERE status = 'available'");
         $stmt->execute();
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getAvailableByCapacity($capacity) {
         $stmt = $this->db->prepare("SELECT * FROM tables WHERE status = 'available' AND capacity >= :cap");
         $stmt->execute(['cap' => (int)$capacity]);
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getAvailableByDateTime($date, $time) {
@@ -75,7 +75,7 @@ class Table {
                 )";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['date' => $date, 'time' => $time]);
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function updateStatus($id, $status) {
@@ -86,13 +86,13 @@ class Table {
     public function getSessions($tableId) {
         $stmt = $this->db->prepare("SELECT * FROM sessions WHERE table_id = :id");
         $stmt->execute(['id' => (int)$tableId]);
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getReservations($tableId) {
         $stmt = $this->db->prepare("SELECT * FROM reservations WHERE table_id = :id");
         $stmt->execute(['id' => (int)$tableId]);
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function isAvailable($tableId, $date, $time) {

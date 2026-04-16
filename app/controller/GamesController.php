@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controller;
 
 use App\Models\GameModel;
-use App\Controllers\CategoriesController;
+use App\Controllers\CategorieController;
 
 
 // session_start();
@@ -13,7 +13,7 @@ use App\Controllers\CategoriesController;
 //         exit();
 //     }
 
-class GameController {
+class GamesController {
 
     private $gameModel;
 
@@ -24,13 +24,13 @@ class GameController {
     public function index() {
         $games = $this->gameModel->findAll();
 
-        require __DIR__ . '/../Views/games/index.php';
+        require __DIR__ . '/../views/games/index.php';
     }
 
     public function show($id) {
         $game = $this->gameModel->findById($id);
 
-        require __DIR__ . '/../Views/games/show.php';
+        require __DIR__ . '/../views/games/show.php';
     }
 
     public function filter() {
@@ -59,14 +59,14 @@ class GameController {
         $this->gameModel->create($name, $category_id, $nb_players, $duration, $difficulty, $description, $status);
 
         header("Location: /games");
-        exit;
+        exit();
         }
 
             
     }
     public function update(){
 
-        $catController = new CategoryController();
+        $catController = new CategorieController();
         $cats = $catController->getCategories($_GET['category_id']);
         
         $id = $_GET['id'];
@@ -88,7 +88,7 @@ class GameController {
             exit();
         }
         $game = $this->gameModel->findById($id);
-        require_once __DIR__ .'/../Views/games/edit.php';
+        require_once __DIR__ .'/../views/games/edit.php';
 
     }
 
@@ -98,6 +98,6 @@ class GameController {
         $this->gameModel->delete($id);
 
         header("Location: /games");
-        exit;
+        exit();
     }
 }
