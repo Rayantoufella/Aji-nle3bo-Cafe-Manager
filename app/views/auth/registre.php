@@ -1,5 +1,6 @@
 <?php
 $error = $error ?? null;
+if(!defined('BASE_URL')) require_once __DIR__.'/../../config/config.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -483,7 +484,7 @@ $error = $error ?? null;
             <h1 class="form-title">Create your account</h1>
             <p class="form-subtitle">Join and start managing your gaming sessions.</p>
 
-            <form method="POST" action="/register" id="registerForm" novalidate>
+            <form method="POST" action="<?= BASE_URL ?>/register" id="registerForm" novalidate>
 
                 <div class="form-row">
                     <!-- Full Name -->
@@ -497,7 +498,7 @@ $error = $error ?? null;
                                 </svg>
                             </span>
                             <input
-                                type="text" id="name" name="name"
+                                type="text" id="name" name="username"
                                 placeholder="John Doe"
                                 required
                             >
@@ -587,7 +588,7 @@ $error = $error ?? null;
                                 </svg>
                             </span>
                             <input
-                                type="password" id="password_confirm" name="password_confirm"
+                                type="password" id="password_confirm" name="confirm_password"
                                 placeholder="••••••••"
                                 required
                             >
@@ -614,7 +615,7 @@ $error = $error ?? null;
                 <!-- Login link -->
                 <p class="reg-link">
                     Already have an account?
-                    <a href="/login">Sign in here</a>
+                    <a href="<?= BASE_URL ?>/login">Sign in here</a>
                 </p>
 
             </form>
