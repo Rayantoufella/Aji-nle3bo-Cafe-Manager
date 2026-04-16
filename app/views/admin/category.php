@@ -4,7 +4,7 @@
   <div><h1>Categories</h1><div class="page-header-sub">Organize games into groups for easy filtering</div></div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 340px;gap:22px">
+<div class="create-layout" style="display:grid;grid-template-columns:1fr 340px;gap:22px">
 
   <!-- CATEGORIES LIST -->
   <div class="card">
@@ -40,12 +40,12 @@
             </td>
             <td>
               <?php if($c['game_count'] == 0): ?>
-              <a href="<?= base() ?>/categories/<?= $c['id'] ?>/delete"
-                class="btn btn-danger btn-sm btn-icon"
-                title="Delete"
-                onclick="return confirm('Delete category \'<?= h(addslashes($c['name'])) ?>\'?')">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-              </a>
+              <form method="POST" action="<?= base() ?>/categories/<?= $c['id'] ?>/delete" style="display:inline"
+                onsubmit="return confirm('Delete category \'<?= h(addslashes($c['name'])) ?>\'?')">
+                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </form>
               <?php else: ?>
               <span title="Cannot delete: category has games" style="cursor:not-allowed;opacity:.4">
                 <button class="btn btn-danger btn-sm btn-icon" disabled>

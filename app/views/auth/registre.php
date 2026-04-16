@@ -547,7 +547,7 @@ if(!defined('BASE_URL')) require_once __DIR__.'/../../config/config.php';
                             <line x1="12" y1="8" x2="12" y2="12"></line>
                             <line x1="12" y1="16" x2="12.01" y2="16"></line>
                         </svg>
-                        Please enter a valid gaming email <!-- Static error message to match design -->
+                        <?= htmlspecialchars($error) ?>
                     </div>
                     <?php endif; ?>
                 </div>

@@ -9,7 +9,7 @@
   </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 300px;gap:22px">
+<div class="create-layout" style="display:grid;grid-template-columns:1fr 300px;gap:22px">
   <div class="card">
     <div class="card-header"><span class="card-title">Reservation Details</span></div>
     <div class="card-body">

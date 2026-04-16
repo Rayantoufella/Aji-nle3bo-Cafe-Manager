@@ -9,7 +9,7 @@
   </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 300px;gap:22px">
+<div class="create-layout" style="display:grid;grid-template-columns:1fr 300px;gap:22px">
   <div class="card">
     <div class="card-header"><span class="card-title">Session Setup</span></div>
     <div class="card-body">
@@ -76,9 +76,10 @@
     <div class="card-header"><span class="card-title">Table Status</span></div>
     <div class="card-body" style="padding:14px">
       <?php
-      // Fetch all tables for the status overview
-      global $pdo;
-      $allTables = $pdo->query("SELECT * FROM tables_cafe ORDER BY number")->fetchAll();
+      // $allTables fetched from router or use existing $pdo from scope
+      if (!isset($allTables)) {
+          $allTables = $pdo->query("SELECT * FROM tables_cafe ORDER BY number")->fetchAll();
+      }
       if(empty($allTables)): ?>
         <p style="text-align:center;font-size:12px;color:var(--muted);padding:20px">No tables configured.</p>
       <?php else: ?>

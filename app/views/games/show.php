@@ -29,7 +29,7 @@ $grad = $grads[$game['id']%6];
   </div>
 </div>
 
-<div style="display:grid;grid-template-columns:360px 1fr;gap:22px">
+<div class="create-layout" style="display:grid;grid-template-columns:360px 1fr;gap:22px">
 
   <!-- IMAGE -->
   <div class="card" style="overflow:hidden">

@@ -129,8 +129,8 @@ switch ($route) {
             require VIEWS.'/games/create.php'; break;
         }
         if ($p1 === 'store' && $method === 'POST') {
-            $pdo->prepare("INSERT INTO games (name,category_id,nb_players,duration,difficulty,description,status) VALUES (?,?,?,?,?,?,?)")
-                ->execute([$_POST['name'],$_POST['category_id'],$_POST['nb_players'],$_POST['duration'],$_POST['difficulty'],$_POST['description'],$_POST['status']]);
+            $pdo->prepare("INSERT INTO games (name,category_id,nb_players,duration,difficulty,description,image_url,status) VALUES (?,?,?,?,?,?,?,?)")
+                ->execute([$_POST['name'],$_POST['category_id'],$_POST['nb_players'],$_POST['duration'],$_POST['difficulty'],$_POST['description'],$_POST['image_url']??null,$_POST['status']]);
             flash('success','Jeu ajouté avec succès !');
             header('Location:'.BASE.'/games'); exit;
         }
@@ -141,8 +141,8 @@ switch ($route) {
             require VIEWS.'/games/edit.php'; break;
         }
         if ($p1 && is_numeric($p1) && $p2 === 'update' && $method === 'POST') {
-            $pdo->prepare("UPDATE games SET name=?,category_id=?,nb_players=?,duration=?,difficulty=?,description=?,status=? WHERE id=?")
-                ->execute([$_POST['name'],$_POST['category_id'],$_POST['nb_players'],$_POST['duration'],$_POST['difficulty'],$_POST['description'],$_POST['status'],$p1]);
+            $pdo->prepare("UPDATE games SET name=?,category_id=?,nb_players=?,duration=?,difficulty=?,description=?,image_url=?,status=? WHERE id=?")
+                ->execute([$_POST['name'],$_POST['category_id'],$_POST['nb_players'],$_POST['duration'],$_POST['difficulty'],$_POST['description'],$_POST['image_url']??null,$_POST['status'],$p1]);
             flash('success','Jeu modifié avec succès !');
             header('Location:'.BASE.'/games'); exit;
         }
@@ -230,6 +230,7 @@ switch ($route) {
         if ($p1 === 'create') {
             $games  = $pdo->query("SELECT * FROM games WHERE status='available' ORDER BY name")->fetchAll();
             $tables = $pdo->query("SELECT * FROM tables_cafe WHERE status='available' ORDER BY number")->fetchAll();
+            $allTables = $pdo->query("SELECT * FROM tables_cafe ORDER BY number")->fetchAll();
             $confirmedRes = $pdo->query("SELECT r.*,t.number as table_number FROM reservations r LEFT JOIN tables_cafe t ON r.table_id=t.id WHERE r.status='confirmed' AND r.reservation_date=CURDATE()")->fetchAll();
             require VIEWS.'/sessions/create.php'; break;
         }
@@ -268,7 +269,7 @@ switch ($route) {
             flash('success','Catégorie ajoutée !');
             header('Location:'.BASE.'/categories'); exit;
         }
-        if ($p1 && is_numeric($p1) && $p2 === 'delete') {
+        if ($p1 && is_numeric($p1) && $p2 === 'delete' && ($method === 'POST' || $method === 'GET')) {
             $pdo->prepare("DELETE FROM categories WHERE id=?")->execute([$p1]);
             flash('success','Catégorie supprimée.');
             header('Location:'.BASE.'/categories'); exit;
