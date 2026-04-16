@@ -1,103 +1,142 @@
 <?php
-
-namespace App\Controllers;
+namespace App\Controller;
 
 use App\Models\GameModel;
-use App\Controllers\CategoriesController;
-
-
-// session_start();
-// if(!isset($_SESSION['user_id'])){
-    
-//         header('Location: index.php');
-//         exit();
-//     }
+use App\Models\CategoryModel;
 
 class GameController {
-
     private $gameModel;
+    private $categoryModel;
 
     public function __construct() {
         $this->gameModel = new GameModel();
+        $this->categoryModel = new CategoryModel();
     }
 
     public function index() {
-        $games = $this->gameModel->findAll();
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
 
-        require __DIR__ . '/../Views/games/index.php';
-    }
+        $categoryFilter = $_GET['category'] ?? null;
+        $search = $_GET['search'] ?? null;
 
-    public function show($id) {
-        $game = $this->gameModel->findById($id);
-
-        require __DIR__ . '/../Views/games/show.php';
-    }
-
-    public function filter() {
-        $categoryId = $_GET['category'] ?? null;
-
-        if ($categoryId) {
-            $games = $this->gameModel->findByCategory($categoryId);
+        if ($search) {
+            $games = $this->gameModel->search($search);
+        } elseif ($categoryFilter) {
+            $games = $this->gameModel->findByCategory($categoryFilter);
         } else {
             $games = $this->gameModel->findAll();
         }
 
-        require __DIR__ . '/../Views/games/index.php';
+        $categories = $this->categoryModel->getAll();
+        $totalGames = $this->gameModel->count();
+        $availableCount = $this->gameModel->countAvailable();
+        $inUseCount = $this->gameModel->countInUse();
+
+        $pageTitle = 'Game Catalogue';
+        require __DIR__ . '/../views/games/index.php';
+    }
+
+    public function show($id) {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+
+        $game = $this->gameModel->findById($id);
+        if (!$game) {
+            header('Location: ' . BASE_URL . '/games');
+            exit;
+        }
+
+        $categories = $this->categoryModel->getAll();
+        $pageTitle = $game['name'];
+        require __DIR__ . '/../views/games/show.php';
+    }
+
+    public function create() {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+
+        $categories = $this->categoryModel->getAll();
+        $pageTitle = 'Add New Game';
+        require __DIR__ . '/../views/games/create.php';
     }
 
     public function store() {
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+        if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
 
-            $name = $_POST['name'];
-            $category_id = $_POST['category_id'];
-            $nb_players = $_POST['nb_players'];
-            $duration = $_POST['duration'];
-            $difficulty = $_POST['difficulty'];
-            $description = $_POST['description'];
-            $status = $_POST['status'];
+        $this->gameModel->create([
+            'name'        => $_POST['name'],
+            'category_id' => $_POST['category_id'],
+            'nb_players'  => $_POST['nb_players'],
+            'duration'    => $_POST['duration'],
+            'difficulty'  => $_POST['difficulty'],
+            'description' => $_POST['description'],
+            'image_url'   => $_POST['image_url'] ?? null,
+            'status'      => $_POST['status'] ?? 'available'
+        ]);
 
-        $this->gameModel->create($name, $category_id, $nb_players, $duration, $difficulty, $description, $status);
-
-        header("Location: /games");
+        $_SESSION['flash_success'] = 'Jeu ajouté avec succès !';
+        header('Location: ' . BASE_URL . '/games');
         exit;
-        }
-
-            
     }
-    public function update(){
 
-        $catController = new CategoryController();
-        $cats = $catController->getCategories($_GET['category_id']);
-        
-        $id = $_GET['id'];
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
-
-            $name = $_POST['name'];
-            $category_id = $_POST['category_id'];
-            $nb_players = $_POST['nb_players'];
-            $duration = $_POST['duration'];
-            $difficulty = $_POST['difficulty'];
-            $description = $_POST['description'];
-            $status = $_POST['status'];
-
-            
-
-            $this->gameModel->update($id, $name, $category_id, $nb_players, $duration, $difficulty, $description, $status);
-
-            header('Location: /updategames');
-            exit();
+    public function edit($id) {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
         }
+
         $game = $this->gameModel->findById($id);
-        require_once __DIR__ .'/../Views/games/edit.php';
+        if (!$game) {
+            header('Location: ' . BASE_URL . '/games');
+            exit;
+        }
 
+        $categories = $this->categoryModel->getAll();
+        $pageTitle = 'Edit Game';
+        require __DIR__ . '/../views/games/edit.php';
     }
 
-    public function delete() {
-        $id = $_POST['id'];
+    public function update($id) {
+        if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+
+        $this->gameModel->update($id, [
+            'name'        => $_POST['name'],
+            'category_id' => $_POST['category_id'],
+            'nb_players'  => $_POST['nb_players'],
+            'duration'    => $_POST['duration'],
+            'difficulty'  => $_POST['difficulty'],
+            'description' => $_POST['description'],
+            'image_url'   => $_POST['image_url'] ?? null,
+            'status'      => $_POST['status']
+        ]);
+
+        $_SESSION['flash_success'] = 'Jeu modifié avec succès !';
+        header('Location: ' . BASE_URL . '/games');
+        exit;
+    }
+
+    public function delete($id) {
+        if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
 
         $this->gameModel->delete($id);
-
-        header("Location: /games");
+        $_SESSION['flash_success'] = 'Jeu supprimé avec succès !';
+        header('Location: ' . BASE_URL . '/games');
         exit;
     }
 }

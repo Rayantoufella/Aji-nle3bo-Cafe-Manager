@@ -1,5 +1,6 @@
 <?php
 $error = $error ?? null;
+if (!defined('BASE_URL')) require_once __DIR__ . '/../../config/config.php';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -444,7 +445,7 @@ $error = $error ?? null;
             </div>
             <?php endif; ?>
 
-            <form method="POST" action="/login" id="loginForm" novalidate>
+            <form method="POST" action="<?= BASE_URL ?>/login" id="loginForm" novalidate>
 
                 <!-- Email -->
                 <div class="field">
@@ -499,7 +500,7 @@ $error = $error ?? null;
                         <input type="checkbox" id="remember" name="remember">
                         Se souvenir 30 jours
                     </label>
-                    <a href="/forgot-password" class="link-forgot">Mot de passe oublié ?</a>
+                    <a href="#" class="link-forgot">Mot de passe oublié ?</a>
                 </div>
 
                 <!-- Submit -->
@@ -514,7 +515,7 @@ $error = $error ?? null;
                 <!-- Register -->
                 <p class="reg-link">
                     Pas encore de compte ?
-                    <a href="/register">Créer un compte</a>
+                    <a href="<?= BASE_URL ?>/register">Créer un compte</a>
                 </p>
 
             </form>

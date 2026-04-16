@@ -1,114 +1,129 @@
 <?php
-
 namespace App\Models;
 
-use App\Models\Database;
 use PDO;
 
 class GameModel {
+    private $db;
 
-    private $conn;
-    private $name;
-    private $category_id;
-    private $nb_players;
-    private $duration;
-    private $difficulty;
-    private $description;
-    private $status;
-
-    public function getName() {
-        return $this->name;
-    }
-
-    public function getCategory_id() {
-        return $this->category_id;
-    }
-
-    public function getNb_players() {
-        return $this->nb_players;
-    }
-
-    public function getDuration() {
-        return $this->duration;
-    }
-
-    public function getDifficulty() {
-        return $this->difficulty;
-    }
-
-    public function getDescription() {
-        return $this->description;
-    }
-
-    public function getStatus() {
-        return $this->status;
-    }
-
-    public function __construct()
-    {
-        $database = new DatabaseModel();
-        $this->conn = $database->connect();
+    public function __construct() {
+        $this->db = DatabaseModel::getConnection();
     }
 
     public function findAll() {
-        $sql = "SELECT games.*, categories.name as category_name 
-                FROM games
-                JOIN categories ON games.category_id = categories.id";
-
-        $stmt = $this->conn->query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $sql = "SELECT g.*, c.name as category_name 
+                FROM games g
+                LEFT JOIN categories c ON g.category_id = c.id
+                ORDER BY g.created_at DESC";
+        return $this->db->query($sql)->fetchAll();
     }
 
     public function findById($id) {
-        $sql = "SELECT * FROM games WHERE id = :id";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute(['id' => $id]);
-
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $sql = "SELECT g.*, c.name as category_name 
+                FROM games g
+                LEFT JOIN categories c ON g.category_id = c.id
+                WHERE g.id = :id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['id' => (int)$id]);
+        return $stmt->fetch();
     }
 
     public function findByCategory($categoryId) {
-        $sql = "SELECT * FROM games WHERE category_id = :category_id";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute(['category_id' => $categoryId]);
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $sql = "SELECT g.*, c.name as category_name 
+                FROM games g
+                LEFT JOIN categories c ON g.category_id = c.id
+                WHERE g.category_id = :category_id
+                ORDER BY g.name";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['category_id' => (int)$categoryId]);
+        return $stmt->fetchAll();
     }
 
-    public function findByPlayers($nb_players) {
-        $sql = "SELECT * FROM games 
-                WHERE nb_players = :nb_players";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute(['nb_players' => $nb_players]);
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function findAvailable() {
+        $sql = "SELECT g.*, c.name as category_name 
+                FROM games g
+                LEFT JOIN categories c ON g.category_id = c.id
+                WHERE g.status = 'available'
+                ORDER BY g.name";
+        return $this->db->query($sql)->fetchAll();
     }
 
-    public function create($name, $categories_id, $nb_players, $duration, $difficulty, $description, $status) {
-        $sql = "INSERT INTO games (name, category_id, nb_players, duration, difficulty, description, status)
-                VALUES (:name, :category_id, :nb_players, :duration, :difficulty, :description, :status)";
-
-        $stmt = $this->conn->prepare($sql);
-
-        return $stmt->execute([$name, $categories_id, $nb_players, $duration, $difficulty, $description, $status]);
+    public function search($keyword) {
+        $sql = "SELECT g.*, c.name as category_name 
+                FROM games g
+                LEFT JOIN categories c ON g.category_id = c.id
+                WHERE g.name LIKE :keyword OR g.description LIKE :keyword2
+                ORDER BY g.name";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['keyword' => "%$keyword%", 'keyword2' => "%$keyword%"]);
+        return $stmt->fetchAll();
     }
 
-    public function update($id, $name, $categories_id, $nb_players, $duration, $difficulty, $description, $status){
-            $sql = 'UPDATE games
-                    SET name = ?, category_id = ?, nb_players = ?, duration = ?, difficulty = ?, description = ?, status = ?
-                    WHERE id = ?';
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$name, $categories_id, $nb_players, $duration, $difficulty, $description, $status, $id]);        
-        }
-    
+    public function create($data) {
+        $sql = "INSERT INTO games (name, category_id, nb_players, duration, difficulty, description, image_url, status)
+                VALUES (:name, :category_id, :nb_players, :duration, :difficulty, :description, :image_url, :status)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'name'        => htmlspecialchars($data['name']),
+            'category_id' => (int)$data['category_id'],
+            'nb_players'  => (int)$data['nb_players'],
+            'duration'    => (int)$data['duration'],
+            'difficulty'  => $data['difficulty'],
+            'description' => htmlspecialchars($data['description']),
+            'image_url'   => $data['image_url'] ?? null,
+            'status'      => $data['status'] ?? 'available'
+        ]);
+        return $this->db->lastInsertId();
+    }
+
+    public function update($id, $data) {
+        $sql = "UPDATE games SET 
+                name = :name, category_id = :category_id, nb_players = :nb_players,
+                duration = :duration, difficulty = :difficulty, description = :description,
+                image_url = :image_url, status = :status
+                WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            'name'        => htmlspecialchars($data['name']),
+            'category_id' => (int)$data['category_id'],
+            'nb_players'  => (int)$data['nb_players'],
+            'duration'    => (int)$data['duration'],
+            'difficulty'  => $data['difficulty'],
+            'description' => htmlspecialchars($data['description']),
+            'image_url'   => $data['image_url'] ?? null,
+            'status'      => $data['status'],
+            'id'          => (int)$id
+        ]);
+    }
 
     public function delete($id) {
-        $sql = "DELETE FROM games WHERE id = :id";
+        $stmt = $this->db->prepare("DELETE FROM games WHERE id = :id");
+        return $stmt->execute(['id' => (int)$id]);
+    }
 
-        $stmt = $this->conn->prepare($sql);
-        return $stmt->execute(['id' => $id]);
+    public function count() {
+        return $this->db->query("SELECT COUNT(*) FROM games")->fetchColumn();
+    }
+
+    public function countAvailable() {
+        return $this->db->query("SELECT COUNT(*) FROM games WHERE status = 'available'")->fetchColumn();
+    }
+
+    public function countInUse() {
+        return $this->db->query("SELECT COUNT(DISTINCT game_id) FROM sessions WHERE status = 'active'")->fetchColumn();
+    }
+
+    public function getMostPlayed($limit = 5) {
+        $sql = "SELECT g.*, c.name as category_name, COUNT(s.id) as play_count
+                FROM games g
+                LEFT JOIN categories c ON g.category_id = c.id
+                LEFT JOIN sessions s ON g.id = s.game_id
+                GROUP BY g.id
+                ORDER BY play_count DESC
+                LIMIT :lim";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue('lim', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 }

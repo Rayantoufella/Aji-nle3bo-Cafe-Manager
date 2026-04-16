@@ -1,52 +1,38 @@
 <?php
 namespace App\Models;
 
-use App\Models\Database;
 use PDO;
+
 class CategoryModel {
-    private $conn;
-    private $name;
-    private $id;
+    private $db;
 
-    public function getName() {
-        return $this->name;
-    }
-    public function getId() {
-        return $this->id;
+    public function __construct() {
+        $this->db = DatabaseModel::getConnection();
     }
 
-    public function __construct()
-    {
-        $database = new DatabaseModel();
-        $this->conn = $database->connect();
-    }
-
-    public function getAllCategories(){
-        $sql = 'SELECT * FROM categories';
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function getAll() {
+        $sql = 'SELECT c.*, COUNT(g.id) as game_count 
+                FROM categories c 
+                LEFT JOIN games g ON c.id = g.category_id 
+                GROUP BY c.id 
+                ORDER BY c.name';
+        return $this->db->query($sql)->fetchAll();
     }
 
     public function findById($id) {
-        $sql = "SELECT * FROM categories WHERE id = ?";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id]);
-
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $this->db->prepare("SELECT * FROM categories WHERE id = :id");
+        $stmt->execute(['id' => (int)$id]);
+        return $stmt->fetch();
     }
 
-    public function addCategory($name){
-        $sql = 'INSERT INTO categories(name) VALUES(?)';
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$name]);
+    public function create($name) {
+        $stmt = $this->db->prepare("INSERT INTO categories (name) VALUES (:name)");
+        $stmt->execute(['name' => htmlspecialchars($name)]);
+        return $this->db->lastInsertId();
     }
 
-    public function deleteCategory($id){
-        $sql = 'DELETE FROM categories WHERE id = ?';
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$id]);
+    public function delete($id) {
+        $stmt = $this->db->prepare("DELETE FROM categories WHERE id = :id");
+        return $stmt->execute(['id' => (int)$id]);
     }
 }
-?>

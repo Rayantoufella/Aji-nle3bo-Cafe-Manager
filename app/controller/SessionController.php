@@ -1,132 +1,99 @@
 <?php
-require_once __DIR__ ."/../models/session.php";
+namespace App\Controller;
 
-class SessionsController {
+use App\Models\SessionModel;
+use App\Models\GameModel;
+use App\Models\TableModel;
+use App\Models\ReservationModel;
 
-    private $model;
+class SessionController {
+    private $sessionModel;
 
-    public function __construct($pdo) {
-        $this->model = new SessionsModel($pdo);
+    public function __construct() {
+        $this->sessionModel = new SessionModel();
     }
 
     public function index() {
-        $sessions = $this->model->getAllSessions();
-        return $sessions;
-    }
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
 
-    public function show($id) {
-        $session = $this->model->getSessionsById($id);
-        if (!$session) {
-            return ['error' => 'Session not found'];
-        }
-        return $session;
-    }
+        $activeSessions = $this->sessionModel->getActive();
+        $activeCount = $this->sessionModel->countActive();
+        $todayCount = $this->sessionModel->countToday();
+        $totalCount = $this->sessionModel->countTotal();
 
-    public function store($game_id, $table_id, $user_id, $start_time, $end_time, $status) {
-        if (empty($game_id) || empty($table_id) || empty($user_id) || empty($start_time) || empty($status)) {
-            return ['error' => 'Missing required fields'];
-        }
-        $this->model->create($game_id, $table_id, $user_id, $start_time, $end_time, $status);
-        return ['success' => 'Session created successfully'];
-    }
-
-    public function edit($id, $game_id, $table_id, $user_id, $start_time, $end_time, $status) {
-        $session = $this->model->getSessionsById($id);
-        if (!$session) {
-            return ['error' => 'Session not found'];
-        }
-        $this->model->update($id, $game_id, $table_id, $user_id, $start_time, $end_time, $status);
-        return ['success' => 'Session updated successfully'];
-    }
-
-    public function destroy($id) {
-        $session = $this->model->getSessionsById($id);
-        if (!$session) {
-            return ['error' => 'Session not found'];
-        }
-        $this->model->delete($id);
-        return ['success' => 'Session deleted successfully'];
-    }
-
-    public function start($gameId, $tableId, $userId) {
-        if (empty($gameId) || empty($tableId) || empty($userId)) {
-            return ['error' => 'Missing required fields'];
-        }
-        $sessionId = $this->model->startSession($gameId, $tableId, $userId);
-        return ['success' => 'Session started', 'session_id' => $sessionId];
-    }
-
-    public function end($sessionId) {
-        $session = $this->model->getSessionsById($sessionId);
-        if (!$session) {
-            return ['error' => 'Session not found'];
-        }
-        if ($session['status'] === 'finished') {
-            return ['error' => 'Session already finished'];
-        }
-        $this->model->endSession($sessionId);
-        return ['success' => 'Session ended successfully'];
+        $pageTitle = 'Sessions';
+        require __DIR__ . '/../views/sessions/index.php';
     }
 
     public function active() {
-        $sessions = $this->model->getActive();
-        return $sessions;
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+
+        $activeSessions = $this->sessionModel->getActive();
+        $pageTitle = 'Active Sessions';
+        require __DIR__ . '/../views/sessions/active.php';
     }
 
-    public function byTable($tableId) {
-        if (empty($tableId)) {
-            return ['error' => 'Table ID is required'];
+    public function history() {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
         }
-        return $this->model->getByTable($tableId);
+
+        $sessions = $this->sessionModel->getFinished();
+        $pageTitle = 'Session History';
+        require __DIR__ . '/../views/sessions/history.php';
     }
 
-    public function byUser($userId) {
-        if (empty($userId)) {
-            return ['error' => 'User ID is required'];
+    public function create() {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
         }
-        return $this->model->getByUser($userId);
+
+        $gameModel = new GameModel();
+        $tableModel = new TableModel();
+        $reservationModel = new ReservationModel();
+
+        $games = $gameModel->findAvailable();
+        $tables = $tableModel->getAvailable();
+        $reservations = $reservationModel->getConfirmedForSession();
+
+        $pageTitle = 'Start Session';
+        require __DIR__ . '/../views/sessions/create.php';
     }
 
-    public function byGame($gameId) {
-        if (empty($gameId)) {
-            return ['error' => 'Game ID is required'];
+    public function start() {
+        if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
         }
-        return $this->model->getByGame($gameId);
+
+        $this->sessionModel->start([
+            'reservation_id' => $_POST['reservation_id'] ?? null,
+            'game_id'        => $_POST['game_id'],
+            'table_id'       => $_POST['table_id']
+        ]);
+
+        $_SESSION['flash_success'] = 'Session démarrée !';
+        header('Location: ' . BASE_URL . '/sessions');
+        exit;
     }
 
-    public function byDate($date) {
-        if (empty($date)) {
-            return ['error' => 'Date is required'];
+    public function end($id) {
+        if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
         }
-        return $this->model->getByDate($date);
-    }
 
-    public function duration($sessionId) {
-        $session = $this->model->getSessionsById($sessionId);
-        if (!$session) {
-            return ['error' => 'Session not found'];
-        }
-        $duration = $this->model->getDuration($sessionId);
-        if ($duration === null) {
-            return ['error' => 'Session not finished yet'];
-        }
-        return ['session_id' => $sessionId, 'duration_minutes' => $duration];
-    }
-
-    public function countGame($gameId) {
-        if (empty($gameId)) {
-            return ['error' => 'Game ID is required'];
-        }
-        $total = $this->model->countByGame($gameId);
-        return ['game_id' => $gameId, 'total_sessions' => $total];
-    }
-
-    public function countUser($userId) {
-        if (empty($userId)) {
-            return ['error' => 'User ID is required'];
-        }
-        $total = $this->model->countByUser($userId);
-        return ['user_id' => $userId, 'total_sessions' => $total];
+        $this->sessionModel->end($id);
+        $_SESSION['flash_success'] = 'Session terminée, table libérée !';
+        header('Location: ' . BASE_URL . '/sessions');
+        exit;
     }
 }
-?>

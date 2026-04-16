@@ -1,52 +1,51 @@
 <?php
-namespace App\Controllers;
-
+namespace App\Controller;
 
 use App\Models\CategoryModel;
 
-// session_start();
-// if(!isset($_SESSION['user_id'])){
-    
-//         header('Location: index.php');
-//         exit();
-//     }
-
-
-
-class CategorieController {
+class CategoryController {
     private $categoryModel;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->categoryModel = new CategoryModel();
     }
 
-    public function index(){
-    $cats = $this->categoryModel->getAllCategories();
-    require_once __DIR__ . '/../Views/user/categories.php';
-}
-
-    public function addCategory(){
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            $cat_name = trim($_POST['cat_name']); 
-            if(!empty($cat_name)){
-                $this->categoryModel->addCategory($cat_name); 
-            }
-            header('Location: /category'); 
-            exit();
+    public function index() {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
         }
+
+        $categories = $this->categoryModel->getAll();
+        $pageTitle = 'Categories';
+        require __DIR__ . '/../views/categories/index.php';
     }
 
-    public function deleteCategory(){
-        if(isset($_GET['delete_cat'])){
-            $this->categoryModel->deleteCategory($_GET['delete_cat']); 
-            header('Location: /category');
-            exit();
+    public function store() {
+        if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
         }
+
+        $name = trim($_POST['name'] ?? '');
+        if (!empty($name)) {
+            $this->categoryModel->create($name);
+            $_SESSION['flash_success'] = 'Catégorie ajoutée !';
+        }
+
+        header('Location: ' . BASE_URL . '/categories');
+        exit;
     }
 
-   public function getCategories($id) {
-    return $this->categoryModel->findById($id);
+    public function delete($id) {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+
+        $this->categoryModel->delete($id);
+        $_SESSION['flash_success'] = 'Catégorie supprimée !';
+        header('Location: ' . BASE_URL . '/categories');
+        exit;
     }
 }
-?>
