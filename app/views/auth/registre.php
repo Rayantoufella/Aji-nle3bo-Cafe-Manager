@@ -1,5 +1,6 @@
 <?php
 $error = $error ?? null;
+$baseUrl = defined('BASE_URL') ? BASE_URL : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -57,7 +58,7 @@ $error = $error ?? null;
         .left {
             flex: 1;
             position: relative;
-            background: url('/Aji-nle3bo-Cafe-Manager/app/views/img/registre.jpg') center/cover no-repeat;
+            background: url('<?= $baseUrl ?>/app/views/img/registre.jpg') center/cover no-repeat;
             background-color: #312e81;
             display: flex;
             flex-direction: column;
@@ -483,7 +484,7 @@ $error = $error ?? null;
             <h1 class="form-title">Create your account</h1>
             <p class="form-subtitle">Join and start managing your gaming sessions.</p>
 
-            <form method="POST" action="/register" id="registerForm" novalidate>
+            <form method="POST" action="<?= $baseUrl ?>/register" id="registerForm" novalidate>
 
                 <div class="form-row">
                     <!-- Full Name -->
@@ -614,7 +615,7 @@ $error = $error ?? null;
                 <!-- Login link -->
                 <p class="reg-link">
                     Already have an account?
-                    <a href="/login">Sign in here</a>
+                    <a href="<?= $baseUrl ?>/login">Sign in here</a>
                 </p>
 
             </form>

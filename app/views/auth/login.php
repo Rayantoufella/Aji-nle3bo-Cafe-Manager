@@ -1,5 +1,6 @@
 <?php
 $error = $error ?? null;
+$baseUrl = defined('BASE_URL') ? BASE_URL : '';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -55,7 +56,7 @@ $error = $error ?? null;
         .left {
             flex: 1;            /* exactly half */
             position: relative;
-            background: url('/Aji-nle3bo-Cafe-Manager/app/views/img/login.jpg') center/cover no-repeat;
+            background: url('<?= $baseUrl ?>/app/views/img/login.jpg') center/cover no-repeat;
             background-color: #1e1b4b;
             display: flex;
             flex-direction: column;
@@ -399,7 +400,7 @@ $error = $error ?? null;
 
     <!-- ══════ LEFT PANEL ══════ -->
     <div class="left">
-        <span class="badge">Établi en 2024</span>
+        <span class="badge">Établi en 2026</span>
 
         <h1>Bienvenue<br>de retour !</h1>
 
@@ -444,7 +445,7 @@ $error = $error ?? null;
             </div>
             <?php endif; ?>
 
-            <form method="POST" action="/login" id="loginForm" novalidate>
+            <form method="POST" action="<?= $baseUrl ?>/login" id="loginForm" novalidate>
 
                 <!-- Email -->
                 <div class="field">
@@ -499,7 +500,6 @@ $error = $error ?? null;
                         <input type="checkbox" id="remember" name="remember">
                         Se souvenir 30 jours
                     </label>
-                    <a href="/forgot-password" class="link-forgot">Mot de passe oublié ?</a>
                 </div>
 
                 <!-- Submit -->
@@ -514,7 +514,7 @@ $error = $error ?? null;
                 <!-- Register -->
                 <p class="reg-link">
                     Pas encore de compte ?
-                    <a href="/register">Créer un compte</a>
+                    <a href="<?= $baseUrl ?>/register">Créer un compte</a>
                 </p>
 
             </form>
@@ -525,7 +525,7 @@ $error = $error ?? null;
                     <a href="#">Confidentialité</a>
                     <a href="#">CGU</a>
                 </div>
-                <span class="footer-copy">© 2024 Ajil L3bo Café</span>
+                <span class="footer-copy">© 2026 Ajil L3bo Café</span>
             </footer>
 
         </div><!-- /.form-box -->
