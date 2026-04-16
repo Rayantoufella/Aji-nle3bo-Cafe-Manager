@@ -44,7 +44,7 @@ CREATE TABLE reservations (
     reservation_date DATE,
     reservation_time TIME,
     table_id INT,
-    status ENUM('pending', 'confirmed', 'cancelled') AS DEFAULT 'pending',
+    status ENUM('pending', 'confirmed', 'cancelled') DEFAULT 'pending',
     created_at TIMESTAMP default CURRENT_TIMESTAMP,
 
     FOREIGN KEY (table_id) REFERENCES tables(id)
