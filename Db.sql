@@ -63,3 +63,4 @@ CREATE TABLE sessions (
     FOREIGN KEY (game_id) REFERENCES games(id),
     FOREIGN KEY (table_id) REFERENCES tables(id)
 );
+

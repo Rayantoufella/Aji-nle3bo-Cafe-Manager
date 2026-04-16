@@ -429,7 +429,16 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
 
             <!-- Brand -->
             <div class="brand">
-                <div class="brand-icon">🎲</div>
+                <div class="brand-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="3" ry="3"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5" fill="white" stroke="none"></circle>
+                        <circle cx="15.5" cy="15.5" r="1.5" fill="white" stroke="none"></circle>
+                        <circle cx="15.5" cy="8.5" r="1.5" fill="white" stroke="none"></circle>
+                        <circle cx="8.5" cy="15.5" r="1.5" fill="white" stroke="none"></circle>
+                        <circle cx="12" cy="12" r="1.5" fill="white" stroke="none"></circle>
+                    </svg>
+                </div>
                 <span class="brand-name">Ajil L3bo Café</span>
             </div>
 

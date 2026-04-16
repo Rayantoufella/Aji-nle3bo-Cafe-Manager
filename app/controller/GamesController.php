@@ -13,7 +13,7 @@ use App\Controllers\CategoriesController;
 //         exit();
 //     }
 
-class GameController {
+class GamesController {
 
     private $gameModel;
 
