@@ -13,7 +13,7 @@ use App\Models\CategoryModel;
 
 
 
-class CategoryController {
+class CategorieController {
     private $categoryModel;
 
     public function __construct()
