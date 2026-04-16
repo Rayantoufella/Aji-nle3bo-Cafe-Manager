@@ -38,7 +38,7 @@ try{
     }
     public function finByEmail($email){
         try{
-            $query = 'SELECT email FROM users WHERE email = :email ' ; 
+            $query = 'SELECT email FROM users WHERE email = :email ' ;
             $this->db->prepare($query) ;
             $this->db->bindValue(':email', $email, PDO::PARAM_STR) ;
             $this->db->execute() ;

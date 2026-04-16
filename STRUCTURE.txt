@@ -1,0 +1,183 @@
+📁 STRUCTURE DU PROJET - ROUTING
+
+Aji-nle3bo-Cafe-Manager/
+│
+├── 📄 .htaccess
+│   └─ Redirige tout vers public/index.php?url=...
+│
+├── 📁 public/
+│   └── 📄 index.php ⭐ POINT D'ENTRÉE UNIQUE
+│       ├─ Charge autoload
+│       ├─ Définit constantes
+│       ├─ Charge routes
+│       └─ Lance router->run()
+│
+├── 📁 router/
+│   ├── 📄 router.php ⭐ CLASSE ROUTER
+│   │   ├─ get($path, $callback)
+│   │   ├─ post($path, $callback)
+│   │   ├─ run()
+│   │   ├─ matchRoute()
+│   │   └─ executeCallback()
+│   │
+│   └── 📄 routes.php ⭐ TOUTES LES ROUTES
+│       ├─ $router->get('/', '...')
+│       ├─ $router->post('/login', '...')
+│       ├─ $router->get('/games', '...')
+│       ├─ $router->get('/games/{id}', '...')
+│       └─ ...
+│
+├── 📁 config/
+│   └── 📄 config.php
+│       ├─ DB_HOST
+│       ├─ DB_NAME
+│       ├─ DB_USER
+│       └─ DB_PASS
+│
+├── 📁 app/
+│   │
+│   ├── 📁 controller/ ⭐ CONTRÔLEURS
+│   │   ├── 📄 AuthController.php
+│   │   │   ├─ showLoginForm()
+│   │   │   ├─ Login()
+│   │   │   ├─ showRegisterForm()
+│   │   │   ├─ Register()
+│   │   │   └─ Logout()
+│   │   │
+│   │   ├── 📄 GamesController.php (class GameController)
+│   │   │   ├─ index()
+│   │   │   ├─ show($id)
+│   │   │   ├─ filter()
+│   │   │   ├─ store()
+│   │   │   ├─ update($id)
+│   │   │   └─ delete()
+│   │   │
+│   │   ├── 📄 CategorieController.php
+│   │   │   ├─ index()
+│   │   │   ├─ addCategory()
+│   │   │   └─ deleteCategory()
+│   │   │
+│   │   ├── 📄 ReservationController.php
+│   │   │   ├─ index()
+│   │   │   ├─ create()
+│   │   │   ├─ store()
+│   │   │   ├─ show($id)
+│   │   │   └─ cancel($id)
+│   │   │
+│   │   ├── 📄 AdminController.php
+│   │   ├── 📄 SessionController.php
+│   │   └── 📄 TableController.php
+│   │
+│   ├── 📁 models/ ⭐ MODÈLES
+│   │   ├── 📄 UserModel.php
+│   │   ├── 📄 GameModel.php
+│   │   ├── 📄 CategoryModel.php
+│   │   ├── 📄 ReservationModel.php
+│   │   ├── 📄 SessionModel.php
+│   │   ├── 📄 DatabaseModel.php
+│   │   └── 📄 AdminModel.php
+│   │
+│   └── 📁 views/ ⭐ VUES
+│       ├── 📁 auth/
+│       │   ├── 📄 login.php (formulaire de connexion)
+│       │   └── 📄 registre.php (formulaire d'inscription)
+│       │
+│       ├── 📁 games/
+│       │   ├── 📄 index.php (liste des jeux)
+│       │   ├── 📄 show.php (détail d'un jeu)
+│       │   └── 📄 create.php (créer un jeu)
+│       │
+│       ├── 📁 admin/
+│       │   ├── 📄 dashbord.php
+│       │   ├── 📄 addgames.php
+│       │   ├── 📄 editgame.php
+│       │   └── 📄 category.php
+│       │
+│       ├── 📁 user/
+│       │   ├── 📄 login.php
+│       │   ├── 📄 registre.php
+│       │   └── 📄 profile.php
+│       │
+│       ├── 📁 layout/
+│       │   ├── 📄 header.php (en-tête)
+│       │   └── 📄 footer.php (pied de page)
+│       │
+│       └── 📁 img/
+│           ├── 📄 login.jpg
+│           ├── 📄 registre.jpg
+│           └── 📄 logo.png
+│
+├── 📁 vendor/
+│   ├── 📄 autoload.php
+│   └── composer/
+│
+├── 📄 composer.json
+│   └─ Autoload PSR-4 pour App\
+│
+├── 📄 Db.sql
+│   └─ Schéma de la base de données
+│
+├── 📄 .htaccess
+│   └─ Redirige tout vers public/index.php
+│
+└── 📄 README.md
+    └─ Documentation du projet
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 FLUX DU ROUTING
+
+Navigateur
+    ↓
+http://localhost/Aji-nle3bo-Cafe-Manager/games
+    ↓
+.htaccess (mod_rewrite)
+    ↓
+public/index.php?url=games
+    ↓
+Charge autoload + constantes
+    ↓
+router/routes.php (déclare routes)
+    ↓
+router->run()
+    ↓
+Cherche route GET /games
+    ↓
+Exécute callback 'GameController@index'
+    ↓
+app/controller/GamesController.php
+    ↓
+class GameController
+    ↓
+$instance->index()
+    ↓
+require views/games/index.php
+    ↓
+Affiche la liste des jeux
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚡ TECHNOS UTILISÉES
+
+• PHP 5.6+ (PSR-4 Autoloading)
+• MySQL (PDO)
+• .htaccess (mod_rewrite)
+• Composer (Autoloader)
+• Namespaces : App\Controller, App\Controllers
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ C'EST PRÊT ! 🎉
+
+Ton application dispose d'un routing complet et fonctionnel.
+
+Prochaines étapes :
+1. Tester chaque route en navigateur
+2. Vérifier la base de données
+3. Compléter les modèles
+4. Ajouter la validation
+5. Implémenter l'authentification
+
+Bon code ! 💻
+
+

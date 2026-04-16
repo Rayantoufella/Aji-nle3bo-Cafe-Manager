@@ -1,0 +1,139 @@
+📦 ROUTING COMPLET - RESUME
+=====================================
+
+✅ FICHIERS MODIFIÉS
+
+1. public/index.php
+   → Front-controller unique
+   → Initialise l'autoload, constantes, et le routeur
+   → Lance router->run()
+
+2. router/router.php
+   → Classe Router simple et fonctionnelle
+   → Méthodes : get(), post(), run()
+   → Supporte les paramètres {id}, {slug}, etc.
+
+3. router/routes.php
+   → Déclaration de TOUTES les routes
+   → 6 catégories : Auth, Games, Categories, Reservations, Admin, Sessions
+   → Format : $router->get('/path', 'Controller@method')
+
+4. app/controller/AuthController.php
+   → Méthodes alignées : showLoginForm(), Login(), showRegisterForm(), Register(), Logout()
+   → BASE_URL intégré pour les redirections
+   → Gestion de session propre
+
+5. app/views/auth/login.php + registre.php
+   → URLs dynamiques avec BASE_URL
+   → Chemins d'images corrigés
+   → Noms de champs alignés
+
+6. config/config.php
+   → Point-virgule ajouté
+
+=====================================
+
+✅ ROUTES DISPONIBLES
+
+AUTH
+├─ GET  /              → showLoginForm
+├─ GET  /login         → showLoginForm
+├─ POST /login         → Login
+├─ GET  /register      → showRegisterForm
+├─ POST /register      → Register
+└─ GET  /logout        → Logout
+
+GAMES
+├─ GET  /games         → index
+├─ GET  /games/{id}    → show
+├─ GET  /games/filter  → filter
+├─ POST /games         → store
+├─ POST /games/delete  → delete
+├─ GET  /games/edit/{id}  → update
+└─ POST /games/edit/{id}  → update
+
+CATEGORIES
+├─ GET  /category         → index
+├─ POST /category         → addCategory
+└─ GET  /category/delete/{id}  → deleteCategory
+
+RESERVATIONS
+├─ GET  /reservations           → index
+├─ GET  /reservations/create    → create
+├─ POST /reservations           → store
+├─ GET  /reservations/{id}      → show
+└─ POST /reservations/{id}/cancel  → cancel
+
+ADMIN
+├─ GET  /admin              → dashboard
+├─ GET  /admin/users        → getAllUsers
+├─ GET  /admin/games        → getAllGames
+└─ GET  /admin/reservations → getAllReservations
+
+SESSIONS
+├─ GET  /sessions           → index
+├─ GET  /sessions/{id}      → show
+└─ POST /sessions           → store
+
+=====================================
+
+✅ COMMENT CA MARCHE
+
+1. Utilisateur fait une requête : GET /Aji-nle3bo-Cafe-Manager/games
+
+2. .htaccess redirige vers :
+   public/index.php?url=games
+
+3. public/index.php :
+   ✓ Charge autoload
+   ✓ Définit APP_ROOT et BASE_URL
+   ✓ Require router/routes.php
+   ✓ Appelle router->run()
+
+4. router->run() :
+   ✓ Récupère la méthode (GET/POST)
+   ✓ Récupère le chemin (/games)
+   ✓ Cherche dans les routes enregistrées
+   ✓ Exécute le callback
+
+5. Callback exécuté :
+   ✓ Parse la chaîne 'GameController@index'
+   ✓ Cherche App\Controllers\GameController
+   ✓ Crée une instance
+   ✓ Appelle ->index()
+
+6. Contrôleur répond :
+   ✓ Récupère les données
+   ✓ Charge la vue
+   ✓ Affiche le résultat
+
+=====================================
+
+✅ ÉTAPES SUIVANTES
+
+1. ✓ Tester les routes avec les URLs ci-dessus
+2. ✓ Vérifier la base de données (Db.sql)
+3. ✓ Corriger les chemins des images si nécessaire
+4. ✓ Ajouter validation des formulaires
+5. ✓ Ajouter authentification/sessions
+6. ✓ Créer les modèles manquants
+7. ✓ Ajouter gestion des erreurs
+
+=====================================
+
+📝 NOTES
+
+• Namespaces acceptés :
+  - App\Controller\*
+  - App\Controllers\*
+
+• Paramètres dans les routes : {id}, {slug}, {name}, etc.
+
+• Tous les contrôleurs doivent être en App\Controller ou App\Controllers
+
+• Chaque contrôleur doit avoir un __construct() sans paramètres obligatoires
+
+• Les méthodes reçoivent les paramètres dans l'ordre : show($id)
+
+=====================================
+
