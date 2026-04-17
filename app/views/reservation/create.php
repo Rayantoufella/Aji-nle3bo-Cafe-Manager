@@ -1819,12 +1819,13 @@ $tables = $tables ?? [
     /* ── CONFETTI ON SUBMIT ── */
     document.querySelector('form').addEventListener('submit', function(e) {
         e.preventDefault();
+        var form = this;
         launchConfetti();
         setTimeout(function() {
             document.getElementById('successOverlay').classList.add('show');
         }, 200);
         setTimeout(function() {
-            e.target.submit();
+            form.submit();
         }, 2200);
     });
 

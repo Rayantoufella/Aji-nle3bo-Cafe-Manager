@@ -5,29 +5,10 @@ use PDO;
 class AdminModel {
 
     private $pdo;
-    private $permissions = [];
 
     public function __construct($pdo) {
         $this->pdo = $pdo;
     }
-
-    
-
-    public function addPermission($perm) {
-        if (!in_array($perm, $this->permissions)) {
-            $this->permissions[] = $perm;
-        }
-    }
-
-    public function hasPermission($perm) {
-        return in_array($perm, $this->permissions);
-    }
-
-    public function getPermissions() {
-        return $this->permissions;
-    }
-
-
 
     public function getAllUsers() {
         $stmt = $this->pdo->prepare("SELECT * FROM users ORDER BY created_at DESC");

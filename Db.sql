@@ -40,6 +40,7 @@ CREATE TABLE reservations (
     id INT AUTO_INCREMENT PRIMARY KEY,
     client_name VARCHAR(255),
     phone VARCHAR(50),
+    user_id INT,
     number_of_people INT,
     reservation_date DATE,
     reservation_time TIME,
@@ -47,7 +48,8 @@ CREATE TABLE reservations (
     status ENUM('pending', 'confirmed', 'cancelled')  DEFAULT 'pending',
     created_at TIMESTAMP default CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (table_id) REFERENCES tables(id)
+    FOREIGN KEY (table_id) REFERENCES tables(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE sessions (
@@ -98,3 +100,6 @@ INSERT IGNORE INTO tables (id, number, capacity, status) VALUES
                                                                   (5, 5, 8, 'available'),
                                                                   (6, 6, 2, 'available');
 
+ALTER TABLE reservations 
+ADD COLUMN user_id INT AFTER phone,
+ADD FOREIGN KEY (user_id) REFERENCES users(id);
