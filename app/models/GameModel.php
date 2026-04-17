@@ -183,6 +183,21 @@ class GameModel {
         }
     }
 
+    public function searchByName($query, $limit = 8) {
+        $sql = "SELECT games.*, categories.name as category_name
+                FROM games
+                LEFT JOIN categories ON games.categories_id = categories.id
+                WHERE games.name LIKE :query OR categories.name LIKE :cat_query
+                ORDER BY games.name ASC
+                LIMIT :limit";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':query', '%' . $query . '%');
+        $stmt->bindValue(':cat_query', '%' . $query . '%');
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?? [];
+    }
+
     // Chercher les jeux populaires
     public function getPopularGames($limit = 6) {
         try {
