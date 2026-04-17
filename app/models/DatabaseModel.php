@@ -15,11 +15,13 @@ class DatabaseModel
     private $pass = DB_PASS;
     private $conn;
 
+    private $port = DB_PORT;
+
     public function connect()
     {
         try {
 
-            $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->dbname, $this->user, $this->pass);
+            $this->conn = new PDO("mysql:host=" . $this->host . ";port=" . $this->port . ";dbname=" . $this->dbname, $this->user, $this->pass);
 
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 

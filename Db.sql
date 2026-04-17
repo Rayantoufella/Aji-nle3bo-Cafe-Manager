@@ -6,6 +6,7 @@ CREATE TABLE users (
     username VARCHAR(255),
     email VARCHAR(255),
     password VARCHAR(255),
+    phone VARCHAR(20),
     role ENUM('admin', 'user'),
     created_at DATETIME default CURRENT_TIMESTAMP
 );

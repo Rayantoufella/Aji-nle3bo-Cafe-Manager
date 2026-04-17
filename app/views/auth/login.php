@@ -454,6 +454,15 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
             </div>
             <?php endif; ?>
 
+            <?php if (isset($_GET['success'])): ?>
+            <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 12px; border-radius: var(--radius); margin-bottom: 24px; font-size: 13.5px; font-weight: 500; display: flex; align-items: center; gap: 9px;">
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <?= htmlspecialchars($_GET['success']) ?>
+            </div>
+            <?php endif; ?>
+
             <form method="POST" action="<?= $baseUrl ?>/login" id="loginForm" novalidate>
 
                 <!-- Email -->

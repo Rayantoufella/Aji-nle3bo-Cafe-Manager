@@ -489,13 +489,21 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
             <div class="badge-right">
                 New Season Live! 🎯
             </div>
-
             <h1 class="form-title">Create your account</h1>
             <p class="form-subtitle">Join and start managing your gaming sessions.</p>
 
-            <form method="POST" action="<?= $baseUrl ?>/register" id="registerForm" novalidate>
+            <?php if (isset($error)): ?>
+                <div style="background: var(--error-bg); color: var(--error); padding: 12px; border-radius: var(--radius); margin-bottom: 20px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; border: 1px solid var(--error);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <?= htmlspecialchars($error) ?>
+                </div>
+            <?php endif; ?>
 
-                <div class="form-row">
+            <form method="POST" action="<?= $baseUrl ?>/register" id="registerForm" novalidate>
                     <!-- Full Name -->
                     <div class="field">
                         <label for="name">Full Name</label>

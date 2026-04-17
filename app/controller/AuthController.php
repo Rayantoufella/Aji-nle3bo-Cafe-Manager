@@ -21,15 +21,23 @@ class AuthController
     public function Register()
     {
        try{
-           if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            if($_SERVER['REQUEST_METHOD'] === 'POST'){
             $username = trim($_POST['name'] ?? '');
             $email = trim($_POST['email'] ?? '');
+            $phone = trim($_POST['phone'] ?? '');
             $password = $_POST['password'] ?? '';
             $confirm_password = $_POST['password_confirm'] ?? '';
+            $terms = isset($_POST['terms']);
 
             // Validate empty fields
             if(empty($username) || empty($email) || empty($password) || empty($confirm_password)){
                 $error = "All fields are required";
+                require dirname(__DIR__) . '/views/auth/registre.php';
+                exit();
+            }
+
+            if(!$terms){
+                $error = "You must accept the Terms of Service.";
                 require dirname(__DIR__) . '/views/auth/registre.php';
                 exit();
             }
@@ -59,9 +67,15 @@ class AuthController
                 exit();
             }
 
-            $this->userModel->create(['username' => $username, 'email' => $email, 'password' => $password]);
+            $this->userModel->create([
+                'username' => $username, 
+                'email' => $email, 
+                'password' => $password, 
+                'phone' => $phone
+            ]);
+            
             $baseUrl = defined('BASE_URL') ? BASE_URL : '';
-            header('Location: ' . $baseUrl . '/login');
+            header('Location: ' . $baseUrl . '/login?success=Registration successful! Please login.');
             exit();
            }
        }catch(PDOException $e){
@@ -80,7 +94,7 @@ class AuthController
             if($_SERVER['REQUEST_METHOD'] === 'POST'){
                 $email = $_POST['email'];
                 $password = $_POST['password'];
-                $user = $this->userModel->finByEmail($email);
+                $user = $this->userModel->findByEmail($email);
                 if($user && password_verify($password, $user['password'])){
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];

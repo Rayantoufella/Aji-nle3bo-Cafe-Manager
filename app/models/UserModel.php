@@ -31,20 +31,21 @@ class UserModel {
 
     public function create($data){
         try{
-            $query = 'INSERT INTO users (username, email, password, role, created_at) VALUES (:username, :email, :password, :role, :created_at)' ;
+            $query = 'INSERT INTO users (username, email, password, phone, role, created_at) VALUES (:username, :email, :password, :phone, :role, :created_at)' ;
             $stmt = $this->db->prepare($query) ;
             $stmt->bindValue(':username', htmlspecialchars($data['username']), PDO::PARAM_STR) ;
             $stmt->bindValue(':email', $data['email'], PDO::PARAM_STR) ;
             $stmt->bindValue(':password', password_hash($data['password'], PASSWORD_BCRYPT), PDO::PARAM_STR) ;
+            $stmt->bindValue(':phone', $data['phone'] ?? null, PDO::PARAM_STR) ;
             $stmt->bindValue(':role', 'user', PDO::PARAM_STR) ;
             $stmt->bindValue(':created_at', date('Y-m-d H:i:s'), PDO::PARAM_STR) ;
             $stmt->execute() ;
         }catch(PDOException $e){
-            exit ("Erreur Connexion " . $e->getMessage()) ;
+            exit ("Execution Error: " . $e->getMessage()) ;
         }
     }
 
-    public function finByEmail($email){
+    public function findByEmail($email){
         try{
             $query = 'SELECT * FROM users WHERE email = :email ORDER BY id DESC LIMIT 1' ;
             $stmt = $this->db->prepare($query) ;
