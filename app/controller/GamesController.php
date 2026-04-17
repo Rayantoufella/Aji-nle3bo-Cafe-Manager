@@ -30,6 +30,21 @@ class GamesController {
     public function show($id) {
         $game = $this->gameModel->findById($id);
 
+        if ($game) {
+            $gameStats = $this->gameModel->getGameStats($id);
+            $gameReviews = $this->gameModel->getGameReviews($id, 5);
+            $relatedGames = $this->gameModel->findRelatedGames($game['categories_id'], $id, 3);
+        } else {
+            $gameStats = null;
+            $gameReviews = [];
+            $relatedGames = [];
+        }
+
+        $user = [
+            'username' => $_SESSION['username'] ?? 'Guest',
+            'role'     => $_SESSION['user_role'] ?? 'Member',
+        ];
+
         require __DIR__ . '/../views/games/show.php';
     }
 
@@ -92,6 +107,8 @@ class GamesController {
 
     }
 
+    // ...existing code...
+
     public function delete() {
         $id = $_POST['id'];
 
@@ -99,5 +116,23 @@ class GamesController {
 
         header("Location: /games");
         exit();
+    }
+
+    public function dashboard() {
+        // Get all games with categories
+        $games = $this->gameModel->findAll();
+
+        // Get all categories
+        $categoryModel = new \App\Models\CategoryModel();
+        $categories = $categoryModel->getAllCategories();
+
+        // Get user from session
+        $user = [
+            'username' => $_SESSION['username'] ?? 'Guest User',
+            'role' => $_SESSION['user_role'] ?? 'Member',
+            'id' => $_SESSION['user_id'] ?? null
+        ];
+
+        require __DIR__ . '/../views/user/Dashboard.php';
     }
 }

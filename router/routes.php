@@ -11,13 +11,13 @@ $router->post('/register', 'AuthController@Register');
 $router->get('/logout', 'AuthController@Logout');
 
 // ===== ROUTES GAMES =====
-$router->get('/games', 'GameController@index');
-$router->get('/games/{id}', 'GameController@show');
-$router->get('/games/filter', 'GameController@filter');
-$router->post('/games', 'GameController@store');
-$router->post('/games/delete', 'GameController@delete');
-$router->get('/games/edit/{id}', 'GameController@update');
-$router->post('/games/edit/{id}', 'GameController@update');
+$router->get('/games', 'GamesController@index');
+$router->get('/games/filter', 'GamesController@filter');
+$router->get('/games/{id}', 'GamesController@show');
+$router->post('/games', 'GamesController@store');
+$router->post('/games/delete', 'GamesController@delete');
+$router->get('/games/edit/{id}', 'GamesController@update');
+$router->post('/games/edit/{id}', 'GamesController@update');
 
 // ===== ROUTES CATEGORIES =====
 $router->get('/category', 'CategorieController@index');
@@ -41,5 +41,7 @@ $router->get('/admin/reservations', 'AdminController@getAllReservations');
 $router->get('/sessions', 'SessionController@index');
 $router->get('/sessions/{id}', 'SessionController@show');
 $router->post('/sessions', 'SessionController@store');
+// ===== ROUTES USER DASHBOARD =====
+$router->get('/dashboard', 'UserController@dashboard');
 
 return $router;

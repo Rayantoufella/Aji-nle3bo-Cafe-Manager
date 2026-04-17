@@ -21,12 +21,20 @@ class UserModel {
 
     }
 
+    public function emailExists($email){
+        $query = 'SELECT COUNT(*) FROM users WHERE email = :email';
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetchColumn() > 0;
+    }
+
     public function create($data){
         try{
             $query = 'INSERT INTO users (username, email, password, role, created_at) VALUES (:username, :email, :password, :role, :created_at)' ;
             $stmt = $this->db->prepare($query) ;
             $stmt->bindValue(':username', htmlspecialchars($data['username']), PDO::PARAM_STR) ;
-            $stmt->bindValue(':email', htmlspecialchars($data['email']), PDO::PARAM_STR) ;
+            $stmt->bindValue(':email', $data['email'], PDO::PARAM_STR) ;
             $stmt->bindValue(':password', password_hash($data['password'], PASSWORD_BCRYPT), PDO::PARAM_STR) ;
             $stmt->bindValue(':role', 'user', PDO::PARAM_STR) ;
             $stmt->bindValue(':created_at', date('Y-m-d H:i:s'), PDO::PARAM_STR) ;
@@ -35,9 +43,10 @@ class UserModel {
             exit ("Erreur Connexion " . $e->getMessage()) ;
         }
     }
+
     public function finByEmail($email){
         try{
-            $query = 'SELECT * FROM users WHERE email = :email' ;
+            $query = 'SELECT * FROM users WHERE email = :email ORDER BY id DESC LIMIT 1' ;
             $stmt = $this->db->prepare($query) ;
             $stmt->bindValue(':email', $email, PDO::PARAM_STR) ;
             $stmt->execute() ;
@@ -47,11 +56,11 @@ class UserModel {
         }
     }
 
-    public function findById(){
+    public function findById($id){
         try{
             $query = 'SELECT * FROM users WHERE id = :id' ;
             $stmt = $this->db->prepare($query) ;
-            $stmt->bindValue(':id', $this->id, PDO::PARAM_INT) ;
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT) ;
             $stmt->execute() ;
             return $stmt->fetch(PDO::FETCH_ASSOC) ;
         }catch(PDOException $e){
