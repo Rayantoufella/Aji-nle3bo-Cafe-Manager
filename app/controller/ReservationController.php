@@ -19,26 +19,7 @@ class ReservationController {
             exit;
         }
 
-        $filter = $_GET['filter'] ?? 'all';
-        
-        switch ($filter) {
-            case 'today':
-                $reservations = $this->reservationModel->getToday();
-                break;
-            case 'upcoming':
-                $reservations = $this->reservationModel->getUpcoming();
-                break;
-            case 'mine':
-                $reservations = $this->reservationModel->getByUser($_SESSION['user_id']);
-                break;
-            default:
-                $reservations = $this->reservationModel->getAll();
-        }
-
-        $totalCount = $this->reservationModel->count();
-        $todayCount = $this->reservationModel->countToday();
-        $pendingCount = $this->reservationModel->countByStatus('pending');
-        $confirmedCount = $this->reservationModel->countByStatus('confirmed');
+        $reservations = $this->reservationModel->getByUser($_SESSION['user_id']);
 
         $pageTitle = 'Reservations';
         require __DIR__ . '/../views/reservation/index.php';
