@@ -69,6 +69,9 @@ $user = $user ?? [
             <nav class="nav-links">
                 <a href="<?= $baseUrl ?>/dashboard" class="<?= (strpos($_SERVER['REQUEST_URI'], '/dashboard') !== false) ? 'active' : '' ?>">Browse Games</a>
                 <a href="<?= $baseUrl ?>/reservations" class="<?= (strpos($_SERVER['REQUEST_URI'], '/reservations') !== false) ? 'active' : '' ?>">My Bookings</a>
+                <?php if(($user['role'] ?? '') === 'admin'): ?>
+                    <a href="<?= $baseUrl ?>/admin" style="font-weight: 700; color: var(--primary, #6366f1); background: var(--primary-light, #e0e7ff);">🛡️ Admin Hub</a>
+                <?php endif; ?>
             </nav>
         </div>
         <div class="nav-right">

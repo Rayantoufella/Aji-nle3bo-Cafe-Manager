@@ -62,6 +62,12 @@ class AdminModel {
         return $stmt->execute([$name, $categories_id, $nb_players, $duration, $difficulty, $description, $status, $gameId]);
     }
 
+    public function getAllGames() {
+        $stmt = $this->pdo->prepare("SELECT games.*, categories.name as category_name FROM games LEFT JOIN categories ON games.categories_id = categories.id ORDER BY games.created_at DESC");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+
     public function deleteGame($gameId) {
         $stmt = $this->pdo->prepare("DELETE FROM games WHERE id = ?");
         return $stmt->execute([$gameId]);
@@ -75,7 +81,7 @@ class AdminModel {
 
 
     public function getAllReservations() {
-        $stmt = $this->pdo->prepare("SELECT * FROM reservations ORDER BY date DESC");
+        $stmt = $this->pdo->prepare("SELECT * FROM reservations ORDER BY reservation_date DESC");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

@@ -33,9 +33,10 @@ $router->post('/reservations/{id}/cancel', 'ReservationController@cancel');
 
 // ===== ROUTES ADMIN =====
 $router->get('/admin', 'AdminController@dashboard');
-$router->get('/admin/users', 'AdminController@getAllUsers');
-$router->get('/admin/games', 'AdminController@getAllGames');
-$router->get('/admin/reservations', 'AdminController@getAllReservations');
+$router->post('/admin/deleteUser', 'AdminController@deleteUser');
+$router->post('/admin/editGame', 'AdminController@editGame');
+$router->post('/admin/deleteGame', 'AdminController@deleteGame');
+$router->post('/admin/cancelReservation', 'AdminController@cancelReservation');
 
 // ===== ROUTES SESSIONS =====
 $router->get('/sessions', 'SessionController@index');

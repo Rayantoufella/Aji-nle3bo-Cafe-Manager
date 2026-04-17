@@ -1749,6 +1749,7 @@ $tables = $tables ?? [
         flashVal(el);
         stepsCompleted.s2 = true;
         updateProgress();
+        checkTableAvailability();
     }
 
     /* ── TABLE SELECT ── */
@@ -1778,7 +1779,52 @@ $tables = $tables ?? [
         var el = document.getElementById('sumDate');
         el.textContent = d.toLocaleDateString('en-US', options);
         flashVal(el);
+        checkTableAvailability();
     }
+
+    /* ── LIVE AVAILABILITY CHECK ── */
+    function checkTableAvailability() {
+        const dateStr = document.getElementById('reservationDate').value;
+        const timeStr = document.getElementById('input_time').value;
+        const cap = document.getElementById('input_players').value;
+        
+        // Convert timeStr like '06:00 PM' to '18:00' if possible, or pass directly
+        const url = `<?= $baseUrl ?>/reservations/check-availability?date=${dateStr}&time=${timeStr}&capacity=${cap}`;
+        
+        fetch(url)
+            .then(res => res.json())
+            .then(availableTables => {
+                const availableIds = availableTables.map(t => parseInt(t.id));
+                
+                document.querySelectorAll('.table-card').forEach(card => {
+                    const tableId = parseInt(card.id.replace('table-', ''));
+                    const statusBadge = card.querySelector('.status-corner');
+                    
+                    if (!availableIds.includes(tableId)) {
+                        card.classList.add('occupied');
+                        card.classList.remove('selected');
+                        card.onclick = null;
+                        if (statusBadge) statusBadge.textContent = 'Occupied';
+                    } else {
+                        card.classList.remove('occupied');
+                        // Restore onclick behavior via closure or inline attribute
+                        card.onclick = function(e) {
+                            const nameEl = card.querySelector('.table-name');
+                            const seatsEl = card.querySelector('.table-seats');
+                            const seats = parseInt(seatsEl.textContent.replace(/\D/g,'') || 4);
+                            selectTable(tableId, nameEl.textContent, seats, card);
+                        };
+                        if (!card.classList.contains('selected') && statusBadge) {
+                            statusBadge.textContent = 'Available';
+                        }
+                    }
+                });
+            })
+            .catch(err => console.error("Could not fetch availability", err));
+    }
+    
+    // Call it immediately on load
+    window.addEventListener('DOMContentLoaded', checkTableAvailability);
 
     /* ── HERO PARTICLES ── */
     (function spawnParticles() {
