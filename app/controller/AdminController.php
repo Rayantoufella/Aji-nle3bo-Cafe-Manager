@@ -84,32 +84,6 @@ class AdminController {
         $this->model->logAction('cancel_reservation', 'Cancelled reservation ID: ' . $resId);
         return ['success' => 'Reservation cancelled successfully'];
     }
-
-
-
-    public function viewLogs() {
-        return $this->model->viewLogs();
-    }
-
-    public function logAction($action, $details) {
-        if (empty($action) || empty($details)) {
-            return ['error' => 'Action and details are required'];
-        }
-        $this->model->logAction($action, $details);
-        return ['success' => 'Action logged successfully'];
-    }
-
-    public function getLogsByAction($action) {
-        if (empty($action)) {
-            return ['error' => 'Action is required'];
-        }
-        return $this->model->getLogsByAction($action);
-    }
-
-    public function getLogsByDate($date) {
-        if (empty($date)) {
-            return ['error' => 'Date is required'];
-        }
-        return $this->model->getLogsByDate($date);
-    }
 }
+
+?>

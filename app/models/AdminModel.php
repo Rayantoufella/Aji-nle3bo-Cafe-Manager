@@ -91,31 +91,5 @@ class AdminModel {
         return $stmt->execute([$resId]);
     }
 
-
-    public function logAction($action, $details) {
-        $stmt = $this->pdo->prepare("
-            INSERT INTO logs (action, details, created_at)
-            VALUES (?, ?, NOW())
-        ");
-        return $stmt->execute([$action, $details]);
-    }
-
-    public function viewLogs() {
-        $stmt = $this->pdo->prepare("SELECT * FROM logs ORDER BY created_at DESC");
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getLogsByAction($action) {
-        $stmt = $this->pdo->prepare("SELECT * FROM logs WHERE action = ? ORDER BY created_at DESC");
-        $stmt->execute([$action]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getLogsByDate($date) {
-        $stmt = $this->pdo->prepare("SELECT * FROM logs WHERE DATE(created_at) = ? ORDER BY created_at DESC");
-        $stmt->execute([$date]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
 }
 ?>
