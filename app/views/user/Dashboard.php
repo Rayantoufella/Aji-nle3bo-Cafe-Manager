@@ -1295,28 +1295,7 @@ $categories = $categories ?? [];
     </footer>
 
     <script>
-        // ==================== DARK MODE ====================
-        const html = document.documentElement;
-        const toggleBtn = document.getElementById('theme-toggle');
-        const themeIcon = document.getElementById('theme-icon');
-
-        const sunSVG = `<path d="M12 3v1m0 16v1M4.22 4.22l.707.707m12.02 12.02.707.707M1 12h2m18 0h2M4.22 19.78l.707-.707M18.36 5.64l.707-.707M12 7a5 5 0 1 0 0 10A5 5 0 0 0 12 7z"/>`;
-        const moonSVG = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
-
-        function applyTheme(theme) {
-            html.setAttribute('data-theme', theme);
-            themeIcon.innerHTML = theme === 'dark' ? sunSVG : moonSVG;
-        }
-
-        const saved = localStorage.getItem('tabletop-theme') || 'light';
-        applyTheme(saved);
-
-        toggleBtn.addEventListener('click', () => {
-            const current = html.getAttribute('data-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('tabletop-theme', next);
-            applyTheme(next);
-        });
+        // Default dark mode handled by header.php now
 
         // ==================== CATEGORY FILTER ====================
         const chips = document.querySelectorAll('.category-chip');
